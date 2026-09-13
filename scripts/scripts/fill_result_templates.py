@@ -20,6 +20,8 @@ from openpyxl import load_workbook
 ROOT = Path(__file__).resolve().parents[1]
 ORIGINAL_TEMPLATES = Path("C:/Users/Lenovo/Desktop/数模/zz/problem/data/附件5")
 QUESTIONS = ("q1", "q2", "q3", "q4-2", "q4-3")
+EMERGENCY_DATE_FORMAT = "yyyy/m/d"
+EMERGENCY_DATE_COLUMN_WIDTH = 13
 
 
 def row_pattern(sheet, row: int, columns: int):
@@ -76,6 +78,7 @@ def fill_emergency(sheet, days) -> None:
     first, middle, last = [row_pattern(sheet, row, 3) for row in range(2, 5)]
     bottom_edges = [copy(sheet.cell(4, col).border.bottom) for col in range(1, 4)]
     clear_example_values(sheet, 3)
+    sheet.column_dimensions["A"].width = EMERGENCY_DATE_COLUMN_WIDTH
     row = 2
     for day in days:
         segments = day["emergency_segments"] or [{"time_range": None, "energy_kwh": 0}]
@@ -93,6 +96,10 @@ def fill_emergency(sheet, days) -> None:
                 datetime.fromisoformat(day["date"]) if index == 0 else None,
                 segment["time_range"], segment["energy_kwh"],
             ])
+            if index == 0:
+                # Do not rely on a copied template style: a General style exposes
+                # Excel's date serial (for example 45813) instead of a date.
+                sheet.cell(row, 1).number_format = EMERGENCY_DATE_FORMAT
             row += 1
 
 
