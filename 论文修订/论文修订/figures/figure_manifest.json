@@ -1,8 +1,8 @@
 {
   "generator": {
     "script": "scripts/scripts/render_paper_figures.py",
-    "version": "2.0.0",
-    "generated_at": "2026-09-13T10:18:33",
+    "version": "3.0.0",
+    "generated_at": "2026-09-13T11:23:10",
     "python": "3.13.12",
     "matplotlib": "3.11.1",
     "numpy": "2.4.1",
@@ -41,6 +41,7 @@
     {
       "id": "fig_5_1_time_mapping_and_information_boundary",
       "title_cn": "图5-1　原始模板行到自然日 144 段的跨行映射与四阶段决策信息边界",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
       "pdf": "论文修订\\论文修订\\figures\\fig_5_1_time_mapping_and_information_boundary.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_5_1_time_mapping_and_information_boundary.png",
       "width_mm": 159.97,
@@ -66,15 +67,68 @@
       ]
     },
     {
-      "id": "fig_6_1_q1_dispatch_mechanism",
-      "title_cn": "图6-1　问题一代表日储能调度与外购费用转移机制",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.png",
+      "id": "fig_5_2_pv_forecast_interpolation",
+      "title_cn": "图5-2　光伏预报的时间尺度转换：整点预报到 10 分钟交付序列的插值过程",
+      "generator_script": "scripts/scripts/render_pv_interpolation_figure.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_5_2_pv_forecast_interpolation.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_5_2_pv_forecast_interpolation.png",
       "width_mm": 159.97,
-      "height_mm": 191.97,
+      "height_mm": 139.95,
       "png_px": [
         3149,
-        3779
+        2755
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "data\\data\\附件3.xlsx",
+          "sha256": "8a61b06c52bd0d639a1cc37c61a7d9f5b75edcbca718f64c1bd3498ec9f9d843"
+        },
+        {
+          "path": "data\\data\\附件2.xlsx",
+          "sha256": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72"
+        },
+        {
+          "path": "src\\src\\q2_solver.py",
+          "sha256": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8"
+        }
+      ]
+    },
+    {
+      "id": "fig_5_3_annual_data_heatmap",
+      "title_cn": "图5-3　全年数据特征的时段热力图：小区负载、光伏出力与电网电价",
+      "generator_script": "scripts/scripts/render_data_characteristics_figure.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_5_3_annual_data_heatmap.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_5_3_annual_data_heatmap.png",
+      "width_mm": 159.97,
+      "height_mm": 111.96,
+      "png_px": [
+        3149,
+        2204
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "data\\data\\附件2.xlsx",
+          "sha256": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72"
+        },
+        {
+          "path": "data\\data\\附件4.xlsx",
+          "sha256": "20e9c93aeab5e8e21ae4dd15587f9e190f7408692504c1319598461cd654fe71"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_1_q1_price_and_storage_dispatch",
+      "title_cn": "图6-1　分时电价与储能调度结果",
+      "generator_script": "scripts/scripts/render_dispatch_overview_figure.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_1_q1_price_and_storage_dispatch.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_1_q1_price_and_storage_dispatch.png",
+      "width_mm": 159.97,
+      "height_mm": 133.96,
+      "png_px": [
+        3149,
+        2637
       ],
       "dpi": 500,
       "data_sources": [
@@ -85,20 +139,37 @@
         {
           "path": "src\\src\\q1_solver.py",
           "sha256": "b10f690b0eb49ed9fa9c2c862972bae1d1a03291893f2e1f0d5828470aeed142"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_2_q1_period_cost_difference",
+      "title_cn": "图6-2　分时段费用变化",
+      "generator_script": "scripts/scripts/render_period_cost_figure.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_2_q1_period_cost_difference.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_2_q1_period_cost_difference.png",
+      "width_mm": 159.97,
+      "height_mm": 87.99,
+      "png_px": [
+        3149,
+        1732
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "data\\data\\附件1.xlsx",
+          "sha256": "66b87134f5ecccd68184d3539bb1293ef039f9e0fdd955a589b9bfa7f227c377"
         },
         {
-          "path": "src\\src\\efficiency.py",
-          "sha256": "2581d05e5a87bbb6e44ea78b5abcdc22219abdb33cc5f3b2da488922e71532a4"
-        },
-        {
-          "path": "data\\data\\附件5\\result1.xlsx",
-          "sha256": "1dab5179d81e0e916c838d8b316bf2b89c71b5efd7232ff802eba3d99a023c0a"
+          "path": "src\\src\\q1_solver.py",
+          "sha256": "b10f690b0eb49ed9fa9c2c862972bae1d1a03291893f2e1f0d5828470aeed142"
         }
       ]
     },
     {
       "id": "fig_6_2_q2_uncertainty_and_shortage_risk",
-      "title_cn": "图6-2　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+      "title_cn": "图6-3　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
       "pdf": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.png",
       "width_mm": 159.97,
@@ -132,15 +203,44 @@
       ]
     },
     {
-      "id": "fig_6_3_q3_stage_value",
-      "title_cn": "图6-3　问题三八种阶段组合的费用构成与各更新时刻的 Shapley 节省分摊",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_value.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_value.png",
+      "id": "fig_6_3_q3_stage_cost_composition",
+      "title_cn": "图6-4　问题三八种阶段组合的费用构成",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_cost_composition.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_cost_composition.png",
       "width_mm": 159.97,
-      "height_mm": 131.98,
+      "height_mm": 149.96,
       "png_px": [
         3149,
-        2598
+        2952
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q3_paper_audit\\q3-paper-audit\\q3_stage_comparison.csv",
+          "sha256": "5dfde453596fabe0aabe367fb658d6d458a16fd6a42988dfc3ad222cb23cf225"
+        },
+        {
+          "path": "q3_paper_audit\\q3-paper-audit\\q3_stage_comparison.json",
+          "sha256": "ffe69e25969a547454f7f4bcf4c815aaacd1854ccce769538537e684c81c6ed1"
+        },
+        {
+          "path": "data\\data\\附件5\\result3.xlsx",
+          "sha256": "c04a0a1e500c0a3f921d3bba9ff67e5393062b503e1a880a811da42e6cfb1379"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_3_q3_shapley_allocation",
+      "title_cn": "图6-5　问题三三阶段 Shapley 收益分摊",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_shapley_allocation.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_shapley_allocation.png",
+      "width_mm": 159.97,
+      "height_mm": 87.99,
+      "png_px": [
+        3149,
+        1732
       ],
       "dpi": 500,
       "data_sources": [
@@ -160,7 +260,8 @@
     },
     {
       "id": "fig_6_4_q4_aggregate_comparison",
-      "title_cn": "图6-4　问题四两种策略的费用构成与紧急购电量比较",
+      "title_cn": "图6-6　问题四两种策略的费用构成与紧急购电量比较",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
       "pdf": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.png",
       "width_mm": 159.97,
@@ -191,7 +292,8 @@
     },
     {
       "id": "fig_6_5_q4_daily_and_cumulative_savings",
-      "title_cn": "图6-5　问题四逐日费用节省与 334 天累计节省",
+      "title_cn": "图6-7　问题四逐日费用节省与 334 天累计节省",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
       "pdf": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.png",
       "width_mm": 159.97,

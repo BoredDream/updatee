@@ -42,7 +42,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from scipy.stats import pearsonr, spearmanr
 
-SCRIPT_VERSION = "2.0.0"
+SCRIPT_VERSION = "3.0.0"
 
 ROOT = Path(r"C:\Users\admin\Desktop\update")
 SRC = ROOT / "src" / "src"
@@ -370,137 +370,6 @@ def fig_5_1() -> None:
     save(fig, "fig_5_1_time_mapping_and_information_boundary")
 
 
-# =========================================================== 图6-1 问题一调度机制
-def fig_6_1(q1: dict) -> None:
-    price, load, pv = q1["price"], q1["load"], q1["pv"]
-    grid_main, grid_base = q1["grid"], q1["baseline_grid"]
-    charge, discharge, soc = q1["charge"], q1["discharge"], q1["soc"]
-    base_cost, main_cost = q1["baseline_cost"], q1["main_cost"]
-    saving = base_cost - main_cost
-
-    check("问题一无储能购电费用", base_cost, 48052.046591, 0.01, " 元")
-    check("问题一储能方案购电费用", main_cost, 35126.848589, 0.01, " 元")
-    check("问题一节省率", saving / base_cost, 0.268983, 1e-6)
-    check("问题一0:00储电量", soc[0], 6000.0, 1e-6, " kWh")
-    check("问题一24:00储电量", soc[-1], 6000.0, 1e-6, " kWh")
-
-    x = np.arange(144)
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 192 * MM), layout="constrained")
-    gs = fig.add_gridspec(5, 1, height_ratios=[1.00, 0.28, 0.60, 0.60, 0.55],
-                          hspace=0.06)
-    axes = []
-
-    # ---- a 负荷 / 光伏 / 购电
-    ax = fig.add_subplot(gs[0]); axes.append(ax)
-    ax.plot(x, load, color="#4D4D4D", linewidth=1.0, label="负荷电量")
-    ax.plot(x, pv, color=GRAYBLUE, linewidth=1.3, label="光伏电量")
-    ax.plot(x, grid_base, color=GRAY, linewidth=1.0, linestyle="--",
-            dashes=(4, 2), label="无储能方案购电量")
-    ax.plot(x, grid_main, color=BLUE, linewidth=1.5, marker="o", markersize=2.0,
-            markevery=12, markerfacecolor="white", markeredgewidth=0.8,
-            label="储能方案购电量")
-    ax.set_ylabel("每 10 分钟电量 / kWh")
-    ax.set_title("a　负荷、光伏与外购电量", loc="left", pad=4)
-    ax.set_ylim(0, 1680)
-    time_ticks(ax); style(ax)
-    ax.legend(loc="upper center", ncol=2, frameon=True, facecolor="white",
-              edgecolor=GRAY_LT, framealpha=0.95, handlelength=2.2, borderpad=0.5)
-    box = dict(boxstyle="square,pad=0.22", facecolor="white", edgecolor="none",
-               alpha=0.85)
-    note(ax, 0.995, 0.155,
-         f"无储能购电费用 {base_cost:,.2f} 元　储能方案购电费用 {main_cost:,.2f} 元",
-         ha="right", va="bottom", size=7.4).set_bbox(box)
-    t = ax.text(0.995, 0.045, f"节省 {saving:,.2f} 元（{100 * saving / base_cost:.2f}%）",
-                transform=ax.transAxes, ha="right", va="bottom", fontsize=8.0,
-                color=ORANGE, bbox=box)
-    t.set_in_layout(False)
-
-    # ---- b 分时电价
-    ax = fig.add_subplot(gs[1]); axes.append(ax)
-    ax.step(np.r_[x, 144], np.r_[price, price[-1]], where="post", color=BLUE,
-            linewidth=1.2)
-    ax.set_ylabel("电价 /\n(元/kWh)")
-    ax.set_title("b　分时电价", loc="left", pad=4)
-    ax.set_ylim(0, 1.62)
-    ax.set_yticks([0.4, 0.8, 1.2])
-    time_ticks(ax); style(ax)
-
-    # ---- c 储能充放电动作
-    ax = fig.add_subplot(gs[2]); axes.append(ax)
-    ax.bar(x, charge, width=1.0, color=BLUE, linewidth=0)
-    ax.bar(x, -discharge, width=1.0, color=GRAYBLUE, linewidth=0)
-    ax.axhline(0, color=INK, linewidth=0.8)
-    ax.set_ylabel("充（+）/ 放（−）\n电量 / kWh")
-    ax.set_ylim(-1000, 1050)
-    ax.set_title("c　储能充放电动作（充电为正、放电为负）", loc="left", pad=4)
-    time_ticks(ax); style(ax)
-
-    # ---- d 储电量状态 SOC
-    ax = fig.add_subplot(gs[3]); axes.append(ax)
-    ax.plot(x, soc[:-1], color=BLUE, linewidth=1.5, marker="o", markersize=2.2,
-            markevery=24, markerfacecolor="white", markeredgewidth=0.8,
-            label="储电量 SOC")
-    bbox = dict(boxstyle="square,pad=0.18", facecolor="white", edgecolor="none",
-                alpha=0.9)
-    for value, lab, va in ((10800, "上限 10800 kWh", "bottom"),
-                           (1200, "下限 1200 kWh", "top")):
-        ax.axhline(value, color=ORANGE, linewidth=1.0, linestyle=(0, (1, 2)))
-        ax.text(2, value + (170 if va == "bottom" else -170), lab, ha="left",
-                va=va, fontsize=7.2, color=ORANGE, bbox=bbox)
-    ax.axhline(6000, color=GRAY, linewidth=0.9, linestyle=(0, (5, 2, 1, 2)))
-    ax.text(143, 6180, "首末储电量 6000 kWh", ha="right", va="bottom",
-            fontsize=7.2, color=GRAY, bbox=bbox)
-    ax.set_ylabel("储电量 SOC /\nkWh")
-    ax.set_ylim(0, 12200)
-    ax.set_yticks([1200, 6000, 10800])
-    ax.set_title("d　储电量状态与上下限", loc="left", pad=4)
-    time_ticks(ax); style(ax)
-
-    # ---- e 4 小时分段费用增减
-    ax = fig.add_subplot(gs[4]); axes.append(ax)
-    deltas, centers = [], []
-    for i in range(6):
-        sl = slice(i * 24, (i + 1) * 24)
-        deltas.append(float(price[sl] @ grid_main[sl] - price[sl] @ grid_base[sl]))
-        centers.append(i * 24 + 12)
-    deltas = np.asarray(deltas)
-    colors = [ORANGE if d > 0 else BLUE for d in deltas]
-    ax.bar(centers, deltas, width=19, color=colors, linewidth=0)
-    ax.axhline(0, color=INK, linewidth=0.8)
-    ax.set_ylabel("分段费用增减 /\n元（储能 − 无储能）")
-    ax.set_xlabel("自然日时间（区间起点）")
-    ax.set_ylim(-9200, 6400)
-    ax.set_title("e　储能相对无储能的 4 小时分段费用增减", loc="left", pad=4)
-    time_ticks(ax); style(ax)
-    for cx, d in zip(centers, deltas):
-        ax.text(cx, d + (280 if d > 0 else -280), f"{d:+,.0f}", ha="center",
-                va="bottom" if d > 0 else "top", fontsize=7.4,
-                color=ORANGE if d > 0 else BLUE)
-    pos = deltas[1] + deltas[4]
-    t = ax.text(0.005, 0.97,
-                f"04:00—08:00 与 16:00—20:00 合计节省 {-pos:,.2f} 元"
-                f"（占净节省 {100 * -pos / saving:.2f}%）",
-                transform=ax.transAxes, ha="left", va="top", fontsize=7.8,
-                color=GRAY)
-    t.set_in_layout(False)
-    ax.legend([Patch(facecolor=ORANGE), Patch(facecolor=BLUE)],
-              ["该段支出增加", "该段节省"], loc="lower right", frameon=True,
-              facecolor="white", edgecolor=GRAY_LT, framealpha=0.95, ncol=1)
-
-    for a in axes[:-1]:
-        a.set_xticklabels([])
-
-    check("问题一04:00—08:00分段节省", deltas[1], -4755.30, 0.01, " 元")
-    check("问题一16:00—20:00分段节省", deltas[4], -6780.34, 0.01, " 元")
-    check("问题一00:00—04:00分段增加", deltas[0], 1917.95, 0.01, " 元")
-    check("问题一12:00—16:00分段增加", deltas[3], 1056.52, 0.01, " 元")
-    check("问题一重点分段占净节省比", -pos / saving, 0.8925, 5e-5)
-    check("问题一全天分段增减合计", deltas.sum(), main_cost - base_cost, 0.01, " 元")
-    check("问题一无储能全天购电量", float(grid_base.sum()), 61789.935400, 0.01, " kWh")
-
-    save(fig, "fig_6_1_q1_dispatch_mechanism")
-
-
 # ========================================================= 图6-2 不确定性缺口风险
 def fig_6_2(q2: dict) -> None:
     check("问题二情景包络覆盖段数", q2["env_hits"], 394.0, 1e-9)
@@ -610,7 +479,19 @@ def fig_6_2(q2: dict) -> None:
 
 
 # ========================================================== 图6-3 问题三阶段价值
-def fig_6_3(q3: dict) -> None:
+_Q3_STATS: dict | None = None
+
+
+def _q3_stage_stats(q3: dict) -> dict:
+    """两张阶段价值图共用的取值与核对。缓存一次：两张图各调一次，
+    不缓存会把同一组 check 记两遍，核对汇总里出现重复行。"""
+    global _Q3_STATS
+    if _Q3_STATS is None:
+        _Q3_STATS = _build_q3_stage_stats(q3)
+    return _Q3_STATS
+
+
+def _build_q3_stage_stats(q3: dict) -> dict:
     rows = q3["rows"]
     totals = {r["policy"]: r["total_cost_yuan"] for r in rows}
     check("问题三仅0:00总费用", totals["0-only"], 13986857.304819, 0.01, " 元")
@@ -629,76 +510,141 @@ def fig_6_3(q3: dict) -> None:
     check("条件边际节省项数", float(len(allmarg)), 12.0, 1e-9)
     check("条件边际节省最小值", float(min(allmarg)), 104071.346872, 0.01, " 元")
     check("条件边际节省全部为正", 0.0 if min(allmarg) > 0 else 1.0, 0.0, 1e-9)
+    return {"rows": rows, "totals": totals, "saving": saving,
+            "shap": shap, "marg": marg}
 
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 132 * MM), layout="constrained")
-    gs = fig.add_gridspec(1, 2, width_ratios=[1.52, 1.0])
 
-    # ---- a 八种组合费用构成
-    ax = fig.add_subplot(gs[0])
-    ordered = sorted(rows, key=lambda r: r["total_cost_yuan"])
-    labels = ["仅0:00" if r["policy"] == "0-only" else r["policy"] for r in ordered]
+# ============================ 图6-4 八种阶段组合的费用构成（独立成图）
+def fig_6_3(q3: dict) -> None:
+    st = _q3_stage_stats(q3)
+    ordered = sorted(st["rows"], key=lambda r: r["total_cost_yuan"])
+    labels = ["仅 0:00" if r["policy"] == "0-only" else r["policy"] for r in ordered]
     plan = np.array([r["plan_cost_yuan"] for r in ordered]) / 1e4
     adj = np.array([r["adjust_cost_yuan"] for r in ordered]) / 1e4
     emg = np.array([r["emergency_cost_yuan"] for r in ordered]) / 1e4
     x = np.arange(len(ordered))
-    ax.bar(x, plan, width=0.62, color=BLUE, linewidth=0, label="计划费用")
-    ax.bar(x, adj, width=0.62, bottom=plan, color=GRAYBLUE, linewidth=0.6,
+    base = st["totals"]["0-only"] / 1e4
+    saving = st["saving"]
+
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 150 * MM))
+    gs = fig.add_gridspec(2, 1, height_ratios=[1.0, 0.72], hspace=0.20,
+                          left=0.088, right=0.982, top=0.892, bottom=0.088)
+    # 紧急费用改用深蓝阶梯而非橙色：左上角的橙色文字已经在讲「节省」，
+    # 同一坐标系里再放橙色柱，橙色会同时指向成本与收益两个相反含义。
+    # 三段蓝的相邻边界灰阶为 84|185 与 185|56，黑白打印下逐界可分。
+
+    # ---- a 总费用构成（自 0 起，保留量级）
+    ax = fig.add_subplot(gs[0])
+    ax.bar(x, plan, width=0.66, color=BLUE, linewidth=0, label="计划费用")
+    ax.bar(x, adj, width=0.66, bottom=plan, color=GRAYBLUE, linewidth=0.6,
            edgecolor=GRAY, label="调整费用")
-    ax.bar(x, emg, width=0.62, bottom=plan + adj, color=ORANGE, linewidth=0,
+    ax.bar(x, emg, width=0.66, bottom=plan + adj, color=BLUE_DK, linewidth=0,
            label="紧急费用")
-    base = totals["0-only"] / 1e4
-    ax.axhline(base, color=GRAY, linestyle="--", dashes=(5, 2), linewidth=1.0)
-    ax.text(7.72, base + 22, "仅 0:00 基线 1398.69 万元", ha="left", va="bottom",
-            fontsize=7.0, color=GRAY)
+    ax.axhline(base, color=GRAY, linestyle="--", dashes=(5, 2), linewidth=1.0,
+               zorder=6)
     for xi, r in zip(x, ordered):
-        ax.text(xi, r["total_cost_yuan"] / 1e4 + 25, f"{r['total_cost_yuan'] / 1e4:.2f}",
-                ha="center", va="bottom", fontsize=6.0, color=INK, rotation=90)
+        ax.text(xi, r["total_cost_yuan"] / 1e4 + 16,
+                f"{r['total_cost_yuan'] / 1e4:.2f}",
+                ha="center", va="bottom", fontsize=7.0, color=INK)
     ax.set_xticks(x)
-    ax.set_xticklabels(labels, rotation=30, ha="right", fontsize=7.6)
-    ax.set_ylabel("费用 / 万元")
-    ax.set_xlabel("预报发布与调整时刻组合（按总费用升序）")
-    ax.set_title("a　八种阶段组合的费用构成", loc="left", pad=4)
-    ax.set_xlim(-0.7, 9.9); ax.set_ylim(0, 2150)
+    # 不用 sharex：共用格式化器时，下面板 set_xticklabels 会把标签一起送上上面板
+    ax.tick_params(labelbottom=False)
+    ax.set_ylabel("总费用 / 万元")
+    ax.set_xlim(-0.68, len(ordered) - 1 + 0.68)
+    ax.set_ylim(0, 1660)
+    ax.set_title("a　八种组合的总费用构成（自 0 起，量级可比）", loc="left", pad=4)
     style(ax)
-    ax.legend(loc="upper right", ncol=1, frameon=True, facecolor="white",
-              edgecolor=GRAY_LT, framealpha=0.95, handlelength=1.4, fontsize=7.2)
-    note(ax, 0.006, 0.985, "全阶段相对仅 0:00", ha="left", va="top", size=7.6)
-    t = ax.text(0.006, 0.930,
-                f"节省 {saving / 1e4:.2f} 万元（{100 * saving / totals['0-only']:.2f}%）",
-                transform=ax.transAxes, ha="left", va="top", fontsize=8.2, color=ORANGE)
+
+    # 基线含义交给图例里的虚线样式，不再在轴内横排文字——
+    # 基线恰与最右柱等高，文字放哪一端都会撞上那根柱的数值标签。
+    handles, names = ax.get_legend_handles_labels()
+    handles.append(Line2D([], [], color=GRAY, linestyle="--", dashes=(5, 2),
+                          linewidth=1.0))
+    names.append("仅 0:00 基线 1398.69 万元")
+    fig.legend(handles, names, loc="outside upper center", ncol=4, frameon=False,
+               fontsize=7.6, handlelength=1.8, columnspacing=1.8)
+
+    t = ax.text(0.008, 0.975,
+                f"全阶段相对仅 0:00 节省 {saving / 1e4:.2f} 万元"
+                f"（{100 * saving / st['totals']['0-only']:.2f}%）",
+                transform=ax.transAxes, ha="left", va="top", fontsize=8.4,
+                color=ORANGE)
     t.set_in_layout(False)
 
-    # ---- b Shapley 分摊
+    # ---- b 去掉计划费用后的放大：一切变化都在调整与紧急两段里
+    # 计划费用近 1210—1290 万元且几乎不随组合变动，占满每根柱的九成，
+    # 把总费用那 5.67% 的差别压成看不出的台阶；单独放大这两段才能读出
+    # 「紧急费用塌缩、调整费用顶上来」这一此消彼长。
     ax = fig.add_subplot(gs[1])
+    nonplan = adj + emg
+    ax.bar(x, adj, width=0.66, color=GRAYBLUE, linewidth=0.6, edgecolor=GRAY,
+           label="调整费用")
+    ax.bar(x, emg, width=0.66, bottom=adj, color=BLUE_DK, linewidth=0,
+           label="紧急费用")
+    for xi, v in zip(x, nonplan):
+        ax.text(xi, v + 0.035 * nonplan.max(), f"{v:.2f}", ha="center",
+                va="bottom", fontsize=7.0, color=INK)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=7.8)
+    ax.set_ylabel("调整 + 紧急\n/ 万元")
+    ax.set_xlabel("预报发布与调整时刻组合（按总费用升序）")
+    ax.set_xlim(-0.68, len(ordered) - 1 + 0.68)
+    ax.set_ylim(0, float(nonplan.max()) * 1.28)
+    ax.set_title("b　非计划部分放大：调整费用与紧急费用的此消彼长", loc="left", pad=4)
+    style(ax)
+    note(ax, 0.994, 0.965,
+         f"计划费用 {plan.min():.2f}—{plan.max():.2f} 万元已从本面板略去",
+         ha="right", va="top", size=7.0)
+
+    save(fig, "fig_6_3_q3_stage_cost_composition")
+
+
+# ============================ 图6-5 三阶段 Shapley 收益分摊（独立成图）
+def fig_6_3_shapley(q3: dict) -> None:
+    st = _q3_stage_stats(q3)
     order = ["6:00", "12:00", "18:00"]
-    vals = np.array([shap[k] for k in order]) / 1e4
-    share = vals / (saving / 1e4) * 100
+    vals = np.array([st["shap"][k] for k in order]) / 1e4
+    share = vals / (st["saving"] / 1e4) * 100
     y = np.arange(len(order))[::-1]
-    ax.barh(y, vals, height=0.46, color=BLUE, linewidth=0)
+
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH_MM * MM, 88 * MM),
+                           layout="constrained")
+    # 横条用橙色：这三根柱本身就是「节省分摊」，与全篇「橙 = 收益」一致。
+    ax.barh(y, vals, height=0.40, color=ORANGE, linewidth=0)
     for yi, v, s, k in zip(y, vals, share, order):
-        ax.text(v + 0.7, yi + 0.13, f"{v:,.2f} 万元", va="center", ha="left",
-                fontsize=8.0, color=INK)
-        ax.text(v + 0.7, yi - 0.13, f"占 {s:.2f}%", va="center", ha="left",
-                fontsize=7.2, color=GRAY)
-        ctx = [m["saving_yuan"] / 1e4 for m in marg[k]]
-        ax.plot(ctx, [yi - 0.30] * len(ctx), linestyle="none", marker="|",
+        # 两条标签一律落在柱外右侧：原图的「占 xx%」压在橙色柱身上，
+        # 灰字配橙底几乎读不出来。
+        ax.text(v + 0.9, yi + 0.115, f"{v:,.2f} 万元", va="center", ha="left",
+                fontsize=8.4, color=INK)
+        ax.text(v + 0.9, yi - 0.115, f"占 {s:.2f}%", va="center", ha="left",
+                fontsize=7.4, color=GRAY)
+        ctx = [m["saving_yuan"] / 1e4 for m in st["marg"][k]]
+        ax.plot(ctx, [yi - 0.32] * len(ctx), linestyle="none", marker="|",
                 markersize=7, markeredgewidth=1.0, color=GRAY, zorder=5)
-        ax.plot([np.mean(ctx)], [yi - 0.30], linestyle="none", marker="o",
+        ax.plot([np.mean(ctx)], [yi - 0.32], linestyle="none", marker="o",
                 markersize=3.2, color=GRAY, zorder=6)
     ax.set_yticks(y)
     ax.set_yticklabels(order)
     ax.set_xlabel("相对仅 0:00 的节省分摊 / 万元")
     ax.set_ylabel("日内预报更新与调整时刻")
-    ax.set_title("b　Shapley 节省分摊", loc="left", pad=4)
-    ax.set_xlim(0, 54); ax.set_ylim(-1.35, 2.62)
+    ax.set_xlim(0, 45)
+    ax.set_ylim(-1.02, 2.34)
     style(ax, "x")
-    ax.legend([Line2D([], [], color=GRAY, marker="|", linestyle="none", markersize=7)],
-              ["该时刻的条件边际节省"], loc="upper right", frameon=False, fontsize=7.2)
-    note(ax, 0.0, 0.02,
-         "分摊对象为预报更新、合同重优化与\n储能状态演化的综合节省，不是预报\n信息的纯因果价值。",
+    # 图例移出轴外单排：轴内右上角正是各阶段条件边际节省的落点（最右一项达
+    # 37.8 万元），图例手柄与数据刻线同为灰色竖线，挤在同一角里无法分辨。
+    fig.legend([Line2D([], [], color=GRAY, marker="|", linestyle="none",
+                       markersize=7, markeredgewidth=1.0),
+                Line2D([], [], color=GRAY, marker="o", linestyle="none",
+                       markersize=3.2)],
+               ["该时刻在 4 种上下文下的条件边际节省", "四者均值"],
+               loc="outside lower center", ncol=2, frameon=False, fontsize=7.4,
+               handlelength=1.0, columnspacing=2.4)
+    note(ax, 0.0, 0.012,
+         "分摊对象为预报更新、合同重优化与储能状态演化的综合节省，\n"
+         "不是预报信息的纯因果价值；三阶段单独取值不可直接相加。",
          ha="left", va="bottom", size=7.4)
 
-    save(fig, "fig_6_3_q3_stage_value")
+    save(fig, "fig_6_3_q3_shapley_allocation")
 
 
 # ====================================================== 图6-4 问题四两策略比较
@@ -730,7 +676,7 @@ def fig_6_4(q4: dict) -> None:
     ax.bar(x, plan, width=0.46, color=BLUE, linewidth=0, label="计划费用")
     ax.bar(x, adj, width=0.46, bottom=plan, color=GRAYBLUE, linewidth=0.6,
            edgecolor=GRAY, label="调整费用")
-    ax.bar(x, emg, width=0.46, bottom=plan + adj, color=ORANGE, linewidth=0,
+    ax.bar(x, emg, width=0.46, bottom=plan + adj, color=BLUE_DK, linewidth=0,
            label="紧急费用")
     for xi, tot in zip(x, total):
         ax.text(xi, tot + 16, f"总费用 {tot:,.2f} 万元", ha="center", va="bottom",
@@ -757,7 +703,8 @@ def fig_6_4(q4: dict) -> None:
     # ---- b 紧急购电量
     ax = fig.add_subplot(gs[1])
     ek = np.array([t2["emergency_kwh"], t3["emergency_kwh"]]) / 1e4
-    ax.bar(x, ek, width=0.46, color=[ORANGE, BLUE], linewidth=0)
+    # 4-2 是基准方案，按全篇约定用灰蓝；4-3 是改进结果用科研蓝。
+    ax.bar(x, ek, width=0.46, color=[GRAYBLUE, BLUE], linewidth=0)
     for xi, v in zip(x, ek):
         ax.text(xi, v + 0.75, f"{v:,.4f} 万kWh", ha="center", va="bottom",
                 fontsize=8.4, color=INK)
@@ -820,8 +767,10 @@ def fig_6_5(q4: dict) -> None:
 
     # ---- a 每日费用节省
     ax = fig.add_subplot(gs[0])
+    # 橙 = 节省、灰蓝 = 增支：全篇橙色的含义是「收益」，
+    # 原先橙 = 费用较高的那 97 天，与图6-2 的橙 = 节省正好相反。
     ax.bar(x, delta / 1e4, width=0.9,
-           color=np.where(delta >= 0, BLUE, ORANGE), linewidth=0)
+           color=np.where(delta >= 0, ORANGE, GRAYBLUE), linewidth=0)
     ax.axhline(0, color=INK, linewidth=0.8)
     ax.set_xticks(ticks)
     ax.set_xticklabels([dates[t][5:] for t in ticks])
@@ -830,9 +779,9 @@ def fig_6_5(q4: dict) -> None:
     ax.set_title("a　逐日费用节省（$\\Delta C_d = C_{4\\text{-}2,d} - C_{4\\text{-}3,d}$）",
                  loc="left", pad=4)
     style(ax)
-    fig.legend(handles=[Patch(facecolor=BLUE,
+    fig.legend(handles=[Patch(facecolor=ORANGE,
                               label=f"4-3 费用较低（{np.count_nonzero(delta >= 0)} 天）"),
-                        Patch(facecolor=ORANGE,
+                        Patch(facecolor=GRAYBLUE,
                               label=f"4-3 费用较高（{np.count_nonzero(delta < 0)} 天）")],
                loc="outside upper center", ncol=2, frameon=False, fontsize=7.8,
                handlelength=1.6, columnspacing=2.0)
@@ -843,17 +792,17 @@ def fig_6_5(q4: dict) -> None:
                 fontsize=7.0, color=GRAY)
     ax.annotate(f"最大节省 {dates[ip][5:]}：{delta[ip]:,.2f} 元",
                 xy=(ip, delta[ip] / 1e4), xytext=(ip + 16, 5.30),
-                fontsize=7.8, color=BLUE, va="center",
-                arrowprops=dict(arrowstyle="-|>", color=BLUE, linewidth=0.9))
-    ax.annotate(f"最大负节省 {dates[ineg][5:]}：{delta[ineg]:,.2f} 元",
-                xy=(ineg, delta[ineg] / 1e4), xytext=(ineg + 16, -1.55),
                 fontsize=7.8, color=ORANGE, va="center",
                 arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
+    ax.annotate(f"最大负节省 {dates[ineg][5:]}：{delta[ineg]:,.2f} 元",
+                xy=(ineg, delta[ineg] / 1e4), xytext=(ineg + 16, -1.55),
+                fontsize=7.8, color=GRAY, va="center",
+                arrowprops=dict(arrowstyle="-|>", color=GRAY, linewidth=0.9))
 
     # ---- b 累计节省
     ax = fig.add_subplot(gs[1], sharex=ax)
-    ax.fill_between(x, 0, cum / 1e4, color=GRAYBLUE, alpha=0.45, linewidth=0)
-    ax.plot(x, cum / 1e4, color=BLUE, linewidth=1.5)
+    ax.fill_between(x, 0, cum / 1e4, color=ORANGE_LT, linewidth=0)
+    ax.plot(x, cum / 1e4, color=ORANGE, linewidth=1.5)
     ax.axhline(0, color=INK, linewidth=0.8)
     ax.set_xticks(ticks)
     ax.set_xticklabels([dates[t][5:] for t in ticks])
@@ -869,10 +818,10 @@ def fig_6_5(q4: dict) -> None:
                 fontsize=7.0, color=GRAY)
     ax.annotate(f"终点 {cum[-1]:,.2f} 元（{cum[-1] / 1e4:,.4f} 万元）",
                 xy=(len(dates) - 1, cum[-1] / 1e4), xytext=(333, 180),
-                fontsize=8.2, color=BLUE, ha="right",
+                fontsize=8.2, color=ORANGE, ha="right",
                 bbox=dict(boxstyle="square,pad=0.28", facecolor="white",
                           edgecolor="none", alpha=0.9),
-                arrowprops=dict(arrowstyle="-|>", color=BLUE, linewidth=0.9))
+                arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
 
     save(fig, "fig_6_5_q4_daily_and_cumulative_savings")
 
@@ -922,31 +871,95 @@ CAPTIONS = {
         "本图为口径示意，不构成任何数值结论；具体取值须以各问的求解输出为准。",
         [PAPER, SRC / "q1_solver.py", SRC / "q2_solver.py"],
     ),
-    "fig_6_1_q1_dispatch_mechanism": (
-        "图6-1　问题一代表日储能调度与外购费用转移机制",
+    "fig_5_2_pv_forecast_interpolation": (
+        "图5-2　光伏预报的时间尺度转换：整点预报到 10 分钟交付序列的插值过程",
         [
-            "代表日负荷电量在 551.57—993.16 kWh/10min 之间波动，光伏电量集中于 04:40—19:20，"
-            "净负荷在 −352.92—826.08 kWh/10min 之间变化。面板 a 中储能方案购电量（科研蓝）"
-            "在夜间与午间高价段低于无储能基线（灰色虚线），在 04:00—08:00 与 16:00—20:00 显著高于基线。",
-            "面板 b 给出分时电价；面板 c 显示充电集中在 00:00—04:00 与 12:00—16:00，"
-            "放电集中在 04:00—08:00 与 16:00—20:00；"
-            "面板 d 的储电量全程处于 1200—10800 kWh（橙色虚线）之间，00:00 与 24:00 均为 6000 kWh。",
-            "对应到面板 e，00:00—04:00 与 12:00—16:00 的分段费用分别增加 1917.95 元与 1056.52 元（橙色），"
-            "04:00—08:00 与 16:00—20:00 分别节省 4755.30 元与 6780.34 元（蓝色），"
-            "两段合计贡献全天净节省的 89.25%。全天购电费用由无储能的 48052.05 元降至 35126.85 元，节省率 26.90%。",
+            "以 2025-06-21 06:00 发布为例：附件3 给出当日 18 个整点预报节点（空心蓝圆），"
+            "发布时刻前最后一个已实现时段的光伏出力 735.83 kW 作为锚点（橙色菱形），"
+            "防止插值曲线在发布时刻附近悬空。",
+            "面板 a 中科研蓝实线为本文采用的 PCHIP 保形插值：它在整点节点之间生成 10 分钟序列，"
+            "节点处不出现折角，且不产生过冲、天然保持非负。灰虚线为线性插值，"
+            "两者的最大偏差为 225.44 kW，出现在 13:10，偏差集中在日出后与日落前的陡升陡降段。",
+            "面板 b 放大 18:00—20:00 日落段：三次样条（深蓝点划线）在出力陡降处过冲，"
+            "最低达 −50.07 kW（19:20），当日共 15 个交付时段被插成负功率（浅橙底纹），物理不可行；"
+            "PCHIP 与线性插值在该段的最小值均为 0。",
         ],
-        "代表日：附件1给定的一天，144 个 10 分钟时段。电量为 kWh（每 10 分钟），电价为元/kWh，"
-        "费用为元，储电量为 kWh。",
-        "附件1.xlsx；由 src/src/q1_solver.py 当前重算的完整 144 段轨迹（附件5 result1.xlsx 仅含题目指定输出，"
-        "不足以重建完整轨迹，已按其计划购电量合计 59482.70 kWh 对账一致）。",
-        "反映了题设代表日与当前效率参数（$\\eta_c=\\eta_d=0.9$，往返 81%）下的购电费用转移，"
+        "案例日 2025-06-21，发布时刻 06:00，预报窗口 06:00—24:00，共 109 个交付时段；"
+        "整点节点间隔 1 h，交付时段间隔 10 min。功率单位为 kW。",
+        "附件3 的光伏整点预报与附件2 的实测光伏功率；插值实现见 src/src/q2_solver.py 的"
+        "预报降尺度与情景构造函数。",
+        "本图只说明时间尺度转换的算法选择，不评价预报精度；替代插值的缺陷是算法性质，"
+        "与所选日期无关。降尺度方式会改变问题二至四的净负荷序列，"
+        "因此该口径须与各问求解器保持一致。",
+        [DATA / "附件3.xlsx", DATA / "附件2.xlsx", SRC / "q2_solver.py"],
+    ),
+    "fig_5_3_annual_data_heatmap": (
+        "图5-3　全年数据特征的时段热力图：小区负载、光伏出力与电网电价",
+        [
+            "三个子图共用日期轴（2025 年 365 天）与日内时刻轴（00:00—24:00，10 分钟一格），"
+            "用分档色深同时读出日周期与季节结构。负载量程 1995.7—7978.9 kW，"
+            "日内峰值在 09:10、谷值在 22:10；光伏量程 0—10216.2 kW，日内峰值在 12:10，"
+            "全年 44.79% 的时段零出力，月均出力以 8 月最强、12 月最弱。",
+            "电价量程 0.0076—1.7936 元/kWh，日内峰值在 20:40、谷值在 05:40，"
+            "月均电价以 12 月最高、5 月最低，全年呈 U 形走势。三个子图的季节结构并不一致："
+            "光伏夏强冬弱、负载夏冬双高、电价年末最高，这正是储能跨时段套利的可操作空间。",
+            "左上角 1 格为 2025-01-01 的 00:00—00:10，无原始行可取，以虚线方框标为空缺点；"
+            "横贯三图的白色虚线为评价期起点 2025-02-01，其上的 1 月为预热期，不参与费用统计。",
+        ],
+        "全年 365 个自然日、每日 144 个 10 分钟时段。负载与光伏单位为 kW，电价为元/kWh。",
+        "附件2 的小区负载与光伏发电实际功率、附件4 的电网电价；"
+        "原始行（区间起点标签，自 00:10 至次日 00:00）到自然日窗口的映射见 "
+        "src/src/q2_solver.py 与 src/src/q4_q2_solver.py 的 load_inputs。",
+        "本图只描述输入数据的分布特征，不构成任何调度或费用结论。"
+        "热力图的分档边界取整以便读数，边界附近的取值不宜作精确比较；"
+        "2025-01-01 首段的空缺由求解器冷启动补足，不影响评价期统计。",
+        [DATA / "附件2.xlsx", DATA / "附件4.xlsx"],
+    ),
+    "fig_6_1_q1_price_and_storage_dispatch": (
+        "图6-1　分时电价与储能调度结果",
+        [
+            "三个子图共用 00:00—24:00 横轴，每段 10 分钟，时间标签为区间起点。"
+            "面板 a 为分时电价阶梯（附件1 电价列），最高 1.395 元/kWh（20:40）、"
+            "最低 0.371 元/kWh（05:40）；面板 b 的储能动作为充电向上（科研蓝）、"
+            "放电向下并加斜纹（橙色）；面板 c 为逐段起点储电量，灰虚线为 1200 与 10800 kWh 容量边界，"
+            "点划线为首末 6000 kWh 水平，方块为起止锚点。",
+            "该日储电量在 1200.0000 kWh 触下限、在 10800.0000 kWh 触上限，两处边界均为紧约束；"
+            "充放电峰值 833.33 kWh/10min，恰好等于 5000 kW 功率上限对应的单段电量上限。",
+            "储能方案全天购电费 35126.85 元，无储能对照 48052.05 元，节省 12925.20 元（26.90%），"
+            "弃光 0.00 kWh。储能不减少总负荷，它的作用是按价差把购电从高价段搬到低价段。",
+        ],
+        "代表日：附件1给定的一天，144 个 10 分钟时段。电量为 kWh（每 10 分钟），"
+        "电价为元/kWh，费用为元，储电量为 kWh。",
+        "附件1.xlsx；由 src/src/q1_solver.py 读附件1 重算的完整 144 段轨迹，"
+        "并对容量边界、首末储电量、递推关系、能量平衡与功率上限逐条对账。",
+        "反映了题设代表日与当前效率参数（$\\eta_c=\\eta_d=0.9$，往返 81%）下的调度结果，"
         "不表示计入储能投资、老化与维护后的全生命周期收益；也不构成购电路径唯一性的结论——"
-        "独立重解曾给出费用相同但逐时段购电向量不同的另一组解。",
-        [DATA / "附件1.xlsx", SRC / "q1_solver.py", SRC / "efficiency.py",
-         ANNEX5 / "result1.xlsx"],
+        "独立重解曾给出费用相同但逐时段购电向量不同的另一组解。本图只反映该代表日，"
+        "不能直接外推至全年。",
+        [DATA / "附件1.xlsx", SRC / "q1_solver.py"],
+    ),
+    "fig_6_2_q1_period_cost_difference": (
+        "图6-2　分时段费用变化",
+        [
+            "纵轴为「储能方案购电费 − 无储能方案购电费」，按 4 小时分为六段（每段 24 个 10 分钟区间）；"
+            "负值表示该时段储能比无储能少支出（节省，橙色），正值表示多支出（灰蓝描边浅填充）。"
+            "无储能对照按逐段净负荷 $\\max(\\text{净负荷},0)$ 全额购电、余量弃光计，不承担储能损耗。",
+            "六段依次为 00:00—04:00 +1917.95、04:00—08:00 −4755.30、08:00—12:00 −1735.78、"
+            "12:00—16:00 +1056.52、16:00—20:00 −6780.34、20:00—24:00 −2628.24 元，"
+            "合计 −12925.20 元，与储能方案全天购电费 35126.85 元、无储能 48052.05 元之差完全一致。",
+            "节省集中在 04:00—08:00 与 16:00—20:00 两段，合计 11535.64 元，占全天净节省的 89.25%；"
+            "其余四段合计仍多支出 2974.47 元——储能的收益来自跨时段价差，"
+            "而不是在每个时段都比无储能便宜。",
+        ],
+        "代表日：附件1给定的一天，144 个 10 分钟时段，每 4 小时合为一段。费用为元（每 4 小时）。",
+        "附件1.xlsx；由 src/src/q1_solver.py 读附件1 重算，六段之和与全天购电费差额逐位对账一致。",
+        "本图只反映该代表日的分段费用转移，不表示全年各时段的费用分布；"
+        "分段边界取整点 4 小时，改用其他分段方式时各段数值会变但合计不变。"
+        "收益未计储能投资、老化与维护成本。",
+        [DATA / "附件1.xlsx", SRC / "q1_solver.py"],
     ),
     "fig_6_2_q2_uncertainty_and_shortage_risk": (
-        "图6-2　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+        "图6-3　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
         [
             "面板 a—d 给出四个指定日期的中心预测净负荷（蓝色虚线）、实际净负荷（深灰实线）、"
             "经验最小—最大包络（浅灰）与经验 10%—90% 分位带（灰蓝）。四日共 576 个自然日时段中，"
@@ -971,30 +984,55 @@ CAPTIONS = {
         [Q2_AUDIT / "interval_detail.csv", Q2_AUDIT / "daily_metrics.csv",
          Q2_AUDIT / "coverage.json", SRC / "q2_solver.py", DATA / "附件2.xlsx"],
     ),
-    "fig_6_3_q3_stage_value": (
-        "图6-3　问题三八种阶段组合的费用构成与各更新时刻的 Shapley 节省分摊",
+    "fig_6_3_q3_stage_cost_composition": (
+        "图6-4　问题三八种阶段组合的费用构成",
         [
-            "面板 a 按总费用升序给出八种组合的费用构成。仅 0:00 决策时总费用 1398.69 万元；"
-            "启用 6:00、12:00、18:00 三次更新后降至 1319.33 万元，节省 79.36 万元、降幅 5.67%。"
-            "该差额由计划费用减少 82.38 万元、紧急购电费减少 84.62 万元与新增调整费用 87.65 万元共同形成；"
-            "八种组合的紧急费用（橙色）随更新时刻增多而大幅压缩，是总费用下降的主要来源。",
-            "面板 b 给出三个时刻的 Shapley 节省分摊：6:00 为 23.28 万元（29.33%）、12:00 为 21.97 万元（27.69%）、"
-            "18:00 为 34.11 万元（42.98%），18:00 贡献最大。灰色横线为该时刻在 4 种上下文下的条件边际节省，"
+            "面板 a 按总费用升序给出八种预报发布与调整时刻组合的费用构成（自 0 起，量级可比）："
+            "计划费用（科研蓝）+ 调整费用（灰蓝）+ 紧急费用（深蓝），灰色虚线为仅 0:00 基线 1398.69 万元。"
+            "仅 0:00 决策时总费用 1398.69 万元；启用 6:00、12:00、18:00 三次更新后降至 1319.33 万元，"
+            "节省 79.36 万元、降幅 5.67%，八种组合的总费用全部不高于基线——"
+            "更新时刻最少的 0+6 组合也已降至 1362.94 万元，哪怕只增加一次日内更新也能获益。",
+            "面板 b 略去计划费用、只放大调整与紧急两段。计划费用在八种组合间仅由 1292.55 万元变到 "
+            "1210.16 万元，却占每根柱的九成以上，在面板 a 中把 5.67% 的差别压成读不出的台阶；"
+            "放大后可见费用结构是「紧急费用塌缩、调整费用顶上来」：紧急费用由 106.14 万元降至 21.52 万元"
+            "（−84.62 万元），新增调整费用 87.65 万元。",
+            "两段相抵后非计划部分反而净增 3.03 万元（106.14 → 109.17 万元），"
+            "即总费用的下降几乎全部来自计划费用减少的 82.38 万元。"
+            "另需注意 0+18 组合的非计划部分最低（94.28 万元），却因计划费用偏高（1252.76 万元）"
+            "总费用只排第五，单看任一分项都不足以判定组合优劣。",
+        ],
+        "评价期 2025-02-01 至 2025-12-31，共 334 天、48096 个自然日时段；情景数 K=30；费用为万元。",
+        "q3_paper_audit 的 q3_stage_comparison.csv 与 q3_stage_comparison.json"
+        "（对应交付工作簿 result3.xlsx）。",
+        "结论限于当前数据、参数（含终端价值 $\\lambda=0.478$ 元/kWh、$K=30$）与实时补救规则，"
+        "且不另计预报获取成本。费用构成只反映各组合的总费用拆分，不表示各时刻更新的边际价值，"
+        "更新时刻越多并不必然越省。模型为滚动两阶段 / SAA 近似，不构成严格多阶段随机最优模型。",
+        [Q3_AUDIT / "q3_stage_comparison.csv", Q3_AUDIT / "q3_stage_comparison.json",
+         ANNEX5 / "result3.xlsx"],
+    ),
+    "fig_6_3_q3_shapley_allocation": (
+        "图6-5　问题三三阶段 Shapley 收益分摊",
+        [
+            "相对仅 0:00 的节省在三个日内更新时刻上的 Shapley 分摊：6:00 为 23.28 万元（29.33%）、"
+            "12:00 为 21.97 万元（27.69%）、18:00 为 34.11 万元（42.98%），18:00 贡献最大；"
+            "三者加总 79.36 万元，与全阶段相对仅 0:00 的总节省一致。",
+            "每根柱下方的灰色竖线为该时刻在 4 种上下文下的条件边际节省（共 12 项），圆点为四者均值；"
             "12 项条件边际节省全部为正，最小值为 10.41 万元。",
             "若仅能保留一次日内更新，0:00 与 18:00 的组合在三个单次更新方案中费用最低（1347.05 万元）。",
         ],
         "评价期 2025-02-01 至 2025-12-31，共 334 天、48096 个自然日时段；情景数 K=30；费用为万元。",
         "q3_paper_audit 的 q3_stage_comparison.csv 与 q3_stage_comparison.json"
         "（对应交付工作簿 result3.xlsx）。",
-        "结论限于当前数据、参数（含终端价值 $\\lambda=0.478$ 元/kWh、$K=30$）与实时补救规则，"
-        "且不另计预报获取成本。Shapley 值分摊的是预报更新、合同重优化与储能状态演化的综合节省，"
-        "不是预报信息本身的纯因果价值；单独引入各时刻的收益不可直接相加。"
-        "模型为滚动两阶段 / SAA 近似，不构成严格多阶段随机最优模型。",
+        "Shapley 值分摊的是预报更新、合同重优化与储能状态演化的综合节省，"
+        "不是预报信息本身的纯因果价值；单独引入各时刻的收益不可直接相加——"
+        "三根柱之和等于总节省，但任一根都不等于“只增加该时刻”所能得到的节省。"
+        "结论限于当前数据、参数与实时补救规则。模型为滚动两阶段 / SAA 近似，"
+        "不构成严格多阶段随机最优模型。",
         [Q3_AUDIT / "q3_stage_comparison.csv", Q3_AUDIT / "q3_stage_comparison.json",
          ANNEX5 / "result3.xlsx"],
     ),
     "fig_6_4_q4_aggregate_comparison": (
-        "图6-4　问题四两种策略的费用构成与紧急购电量比较",
+        "图6-6　问题四两种策略的费用构成与紧急购电量比较",
         [
             "4-2 在 334 天评价期的总费用为 1520.18 万元，其中计划费用 1349.17 万元、紧急费用 171.01 万元，"
             "无调整费用；4-3 的总费用为 1387.65 万元，其中计划费用 1273.42 万元、调整费用 91.61 万元、"
@@ -1014,7 +1052,7 @@ CAPTIONS = {
          ANNEX5 / "result4-2.xlsx", ANNEX5 / "result4-3.xlsx"],
     ),
     "fig_6_5_q4_daily_and_cumulative_savings": (
-        "图6-5　问题四逐日费用节省与 334 天累计节省",
+        "图6-7　问题四逐日费用节省与 334 天累计节省",
         [
             "逐日节省定义为 $\\Delta C_d = C_{4\\text{-}2,d} - C_{4\\text{-}3,d}$。334 天中 4-3 费用较低的为 237 天（科研蓝），"
             "费用较高的为 97 天（橙色），全年费用较低并不意味着每日均占优。",
@@ -1035,12 +1073,31 @@ CAPTIONS = {
 }
 
 
+# 由同级脚本单独生成、只在此登记图注与清单的图件：stem -> 生成脚本。
+# 这几张图的数据源、口径与自检都在各自脚本里，本脚本不重绘它们，
+# 只在组装清单前确认产物已在盘上；图注文字与各脚本 caption() 保持一致，
+# 改动其中一处时须同步另一处。
+EXTERNAL_STEMS = {
+    "fig_5_2_pv_forecast_interpolation":
+        "scripts/scripts/render_pv_interpolation_figure.py",
+    "fig_5_3_annual_data_heatmap":
+        "scripts/scripts/render_data_characteristics_figure.py",
+    "fig_6_1_q1_price_and_storage_dispatch":
+        "scripts/scripts/render_dispatch_overview_figure.py",
+    "fig_6_2_q1_period_cost_difference":
+        "scripts/scripts/render_period_cost_figure.py",
+}
+
+
 def write_captions() -> None:
     lines = [
         "# 论文图件图注与分析",
         "",
         f"生成脚本：`scripts/scripts/render_paper_figures.py`（版本 {SCRIPT_VERSION}）　"
         f"生成时间：{datetime.now().isoformat(timespec='seconds')}",
+        "",
+        "本文件同时收录由同级脚本生成的图件，各自的数据源与自检见各脚本："
+        + "；".join(f"`{s}`（`{n}`）" for n, s in EXTERNAL_STEMS.items()) + "。",
         "",
         "数据口径统一说明：时间标签一律为区间起点；自然日 00:00 首段取自前一原始行末项。"
         "问题二至四的费用比较期为 2025-02-01 至 2025-12-31，共 334 天、48096 个时段。"
@@ -1113,17 +1170,30 @@ def main() -> None:
 
     print("绘制图件……")
     fig_5_1()
-    fig_6_1(q1)
     fig_6_2(q2)
     fig_6_3(q3)
+    fig_6_3_shapley(q3)
     fig_6_4(q4)
     fig_6_5(q4)
 
+    # 外挂图件由同级脚本各自生成（各脚本自带数据源与对账），此处只核对产物存在。
+    # 它们不进上面这段绘制流程，只登记到图注与清单里。
+    for stem, script in EXTERNAL_STEMS.items():
+        for ext in (".pdf", ".png"):
+            path = FIGDIR / f"{stem}{ext}"
+            if not path.exists():
+                raise FileNotFoundError(
+                    f"{path} 不存在；请先运行 {script} 生成该图件")
+
     stems = [
         "fig_5_1_time_mapping_and_information_boundary",
-        "fig_6_1_q1_dispatch_mechanism",
+        "fig_5_2_pv_forecast_interpolation",
+        "fig_5_3_annual_data_heatmap",
+        "fig_6_1_q1_price_and_storage_dispatch",
+        "fig_6_2_q1_period_cost_difference",
         "fig_6_2_q2_uncertainty_and_shortage_risk",
-        "fig_6_3_q3_stage_value",
+        "fig_6_3_q3_stage_cost_composition",
+        "fig_6_3_q3_shapley_allocation",
         "fig_6_4_q4_aggregate_comparison",
         "fig_6_5_q4_daily_and_cumulative_savings",
     ]
@@ -1137,6 +1207,8 @@ def main() -> None:
         figures.append({
             "id": stem,
             "title_cn": CAPTIONS[stem][0],
+            "generator_script": EXTERNAL_STEMS.get(
+                stem, "scripts/scripts/render_paper_figures.py"),
             "pdf": str((FIGDIR / f"{stem}.pdf").relative_to(ROOT)),
             "png": str(png.relative_to(ROOT)),
             "width_mm": round(w_px / PNG_DPI * 25.4, 2),
