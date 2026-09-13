@@ -1,6 +1,6 @@
 # 论文图件图注与分析
 
-生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.0.0）　生成时间：2026-09-13T12:29:28
+生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.1.0）　生成时间：2026-09-13T14:54:15
 
 本文件同时收录由同级脚本生成的图件，各自的数据源与自检见各脚本：`scripts/scripts/render_pv_interpolation_figure.py`（`fig_5_2_pv_forecast_interpolation`）；`scripts/scripts/render_data_characteristics_figure.py`（`fig_5_3_annual_data_heatmap`）；`scripts/scripts/render_dispatch_overview_figure.py`（`fig_6_1_q1_price_and_storage_dispatch`）；`scripts/scripts/render_period_cost_figure.py`（`fig_6_2_q1_period_cost_difference`）。
 
@@ -205,5 +205,24 @@
 **数据源**：q4 的 payload_q4-2_K30.json、payload_q4-3_K30.json 与 summary_q4-2_K30.json、summary_q4-3_K30.json（逐日费用经两两互校，最大差为 0）。
 
 **结论适用边界**：日度差异反映两套完整策略在不同日期下的综合执行结果，单日胜负不构成机制的因果识别；累计结果只对应当前年度样本与当前参数，不外推至其他年份或其他情景构造方式。
+
+---
+
+## 图6-9　4-2 策略的参考调度与实际补救过程
+
+**文件**：`fig_6_9_q4_2_reference_replay.pdf`、`fig_6_9_q4_2_reference_replay.png`
+
+**分析**
+
+1. 以 2025-09-23 为代表日（当日情景数 14，为评价期内的上限档）。上图比较 SAA 情景平均参考充放电量与实际执行量：参考充电 20663.22 kWh、参考放电 15373.03 kWh，实际充电 18536.50 kWh、实际放电 15014.78 kWh，即实际相对参考少充 2126.72 kWh、少放 358.24 kWh。按段统计，削减充电合计 3793.96 kWh、追加放电合计 2869.29 kWh，与“缺电时先削充电、不足再追加放电、仍有缺口才紧急购电”的补救次序一致。
+2. 中图以灰色柱给出实际供需偏差（实际净负荷 − 计划购电量），当日缺额合计 19623.19 kWh、富余合计 18558.96 kWh。缺口由储能放电（蓝，向上）与紧急购电（橙，斜纹，向上）逐级补足，富余由储能充电（蓝，向下）与剩余电量（浅灰，向下）吸收；窄柱之和逐段严格等于灰柱高度（残差为 0），即缺口 = 放电 − 充电 + 紧急购电 − 剩余，不残留未被覆盖的偏差。
+3. 当日紧急购电 4608.41 kWh，集中在 25 个时段，最大单段 827.18 kWh；这些时段在下图以橙点标出，可见紧急购电发生在储电量已被用到接近下限的时段。
+4. 下图给出储电量变化：自 1217.94 kWh 出发，全程落在 1200—10800 kWh 运行边界之内，其中 25 段恰好压在下限 1200.00 kWh 上，日末回到 1217.69 kWh，与起点几乎一致。补救过程把缺口补满，同时没有越出储能的物理边界。
+
+**数据期间与单位**：代表日 2025-09-23，属 2025-02-01 至 2025-12-31 评价期；自然日 144 段，时间标签为区间起点；电量为 kWh（每 10 分钟）；储电量为 kWh。参考轨迹含 τ=144 的日末边界，与实际 144 段动作比较时取前 144 项。
+
+**数据源**：q4/q4/q4-2_reference_trajectory_K30.npz（重跑保存的情景平均参考轨迹）、q4/q4/payload_q4-2_K30.json（交付工作簿 payload）与 q4/q4/q4-2_reference_replay_verification.json（独立重放检验报告）；实际净负荷取自 data/data 附件，经 src/src/q2_solver.py:load_inputs 读取。
+
+**结论适用边界**：计划购电量按自然日口径执行：00:00 段承接前一日的午夜承诺，其余段沿用当日计划，当日计划购电量合计 61109.54 kWh（与交付 payload 一致）。本图只还原一个代表日的执行链路，用来说明参考动作如何被逐时段修正为实际动作，不构成全年费用或节省结论。模型为滚动两阶段 / SAA 近似，不属严格多阶段随机最优模型；该日执行过程可复现也不等于最优解唯一或全年全局最优。
 
 ---

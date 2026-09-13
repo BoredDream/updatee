@@ -1,8 +1,8 @@
 {
   "generator": {
     "script": "scripts/scripts/render_paper_figures.py",
-    "version": "3.0.0",
-    "generated_at": "2026-09-13T12:29:28",
+    "version": "3.1.0",
+    "generated_at": "2026-09-13T14:54:15",
     "python": "3.13.12",
     "matplotlib": "3.11.1",
     "numpy": "2.4.1",
@@ -347,6 +347,34 @@
         {
           "path": "q4\\q4\\summary_q4-3_K30.json",
           "sha256": "8407567341e7f6776a77366e496a30e089ec95bfd1e4a95752d5dfce6db7c1ca"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_9_q4_2_reference_replay",
+      "title_cn": "图6-9　4-2 策略的参考调度与实际补救过程",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_9_q4_2_reference_replay.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_9_q4_2_reference_replay.png",
+      "width_mm": 159.97,
+      "height_mm": 184.0,
+      "png_px": [
+        3149,
+        3622
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q4\\q4\\q4-2_reference_trajectory_K30.npz",
+          "sha256": "411c93704e9a0551f813f95b4cfbdbd8c1f4ef5ccc3c1529617588ee4fd98dc8"
+        },
+        {
+          "path": "q4\\q4\\payload_q4-2_K30.json",
+          "sha256": "f5fb272e5dae3b35290cf5b2833477f70214ff7547b4d203f6021a676e578fce"
+        },
+        {
+          "path": "q4\\q4\\q4-2_reference_replay_verification.json",
+          "sha256": "e59ef1460e0617306f0b75c2c7fe422c9b9fa311b8ac4c9d041771f1c7cf9470"
         }
       ]
     }

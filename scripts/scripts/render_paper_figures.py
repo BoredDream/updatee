@@ -1,4 +1,4 @@
-"""渲染数学建模竞赛论文图件（图5-1、图6-1 ~ 图6-8）。
+"""渲染数学建模竞赛论文图件（图5-1、图6-1 ~ 图6-9）。
 
 统一视觉规范
 ------------
@@ -42,7 +42,7 @@ from matplotlib.lines import Line2D
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 from scipy.stats import pearsonr, spearmanr
 
-SCRIPT_VERSION = "3.0.0"
+SCRIPT_VERSION = "3.1.0"
 
 ROOT = Path(r"C:\Users\admin\Desktop\update")
 SRC = ROOT / "src" / "src"
@@ -140,10 +140,15 @@ def time_ticks(ax, step: int = 24) -> None:
     ax.set_xlim(0, 144)
 
 
-def note(ax, x, y, text, ha="left", va="top", size=7.4, color=GRAY):
-    """图内说明文字：置于轴内、不参与布局计算、可读性由白底保证。"""
+def note(ax, x, y, text, ha="left", va="top", size=7.4, color=GRAY, box=False):
+    """图内说明文字：置于轴内、不参与布局计算、可读性由白底保证。
+
+    box=True 时给文字加一层不透明白底，用于说明文字与网格线、参考线交叉的场合。
+    """
+    bbox = (dict(boxstyle="square,pad=0.25", facecolor="white", edgecolor="none",
+                 alpha=0.92) if box else None)
     t = ax.text(x, y, text, transform=ax.transAxes, ha=ha, va=va,
-                fontsize=size, color=color, linespacing=1.5)
+                fontsize=size, color=color, linespacing=1.5, bbox=bbox)
     t.set_in_layout(False)
     return t
 
@@ -218,6 +223,9 @@ def load_q2() -> dict:
         "emergency": np.array([float(r["emergency_kwh"]) for r in daily]),
         "mae": np.array([float(r["forecast_mae_kwh"]) for r in daily]),
         "daily_dates": [r["date"] for r in daily],
+        # 图6-9 需要实际净负荷本身；与 q4 backtest 取的是同一份 net_actual
+        # （backtest 只在第 0 天改写首段为冷启动值，图6-9 选的日期不是第 0 天）。
+        "net_actual": net, "dates": dates,
     }
 
 
@@ -879,6 +887,181 @@ def fig_6_8(q4: dict) -> None:
     save(fig, "fig_6_8_q4_daily_and_cumulative_savings")
 
 
+# ================================ 图6-9 4-2 参考调度与实际补救（代表日 2025-09-23）
+# 与前面几张问题四图件不同，本图不看费用汇总，而是把一个自然日的执行过程摊开：
+# 优化器给的参考动作 → 实际出现供需偏差 → 储能动作被削减/追加 → 剩余缺口紧急购电。
+# 配色沿用全篇语义：蓝=储能动作与状态，橙=紧急购电（与图6-3、图6-4 的橙色语义一致），
+# 灰=基准与剩余；充放电一律靠方向区分，深浅只用来区分参考/实际，
+# 这样同一个图里橙色不会既指放电又指紧急购电。
+REF_TRAJ = Q4 / "q4-2_reference_trajectory_K30.npz"
+REF_DAY = "2025-09-23"
+_Q4_REF_STATS: dict | None = None
+
+
+def _q4_ref_stats(q2: dict, q4: dict) -> dict:
+    """图6-9 的全部取值与核对，只取代表日 2025-09-23。"""
+    global _Q4_REF_STATS
+    if _Q4_REF_STATS is not None:
+        return _Q4_REF_STATS
+
+    traj = np.load(REF_TRAJ, allow_pickle=False)
+    day = int(np.where(traj["dates"] == REF_DAY)[0][0])
+    # q4 backtest 只在第 0 天把首段改写为冷启动值；代表日不在第 0 天，
+    # 因此 q2.load_inputs 取到的 net_actual 与 q4 backtest 用的是同一份。
+    assert day != 0, "代表日不能是第 0 天，否则实际净负荷与 q4 backtest 不同源"
+    net = q2["net_actual"][day]
+
+    nat, x = traj["natural_x"][day], traj["x"][day]
+    c, g = traj["c"][day], traj["g"][day]
+    z, w = traj["z"][day], traj["w"][day]
+    soc = traj["S"][day]
+    ref_c = traj["reference_charge_145"][day][:144]
+    ref_g = traj["reference_discharge_145"][day][:144]
+    gap = net - nat
+
+    payload = {str(d["date"]): d for d in q4["p2"]["days"]}[REF_DAY]
+    # 与交付产物对账：图上的计划购电量、紧急购电量、起止储电量必须与交付 payload 一致。
+    check("图6-9 情景数", float(traj["scenario_count"][day]), 14.0, 1e-9)
+    check("图6-9 计划购电量与交付 payload 一致",
+          float(x.sum()), payload["plan_total_kwh"], 1e-6, " kWh")
+    check("图6-9 紧急购电量与交付 payload 一致",
+          float(z.sum()), payload["emergency_total_kwh"], 1e-6, " kWh")
+    check("图6-9 起始储电量与交付 payload 一致",
+          float(soc[0]), payload["soc_start_kwh"], 1e-6, " kWh")
+    check("图6-9 日末储电量与交付 payload 一致",
+          float(soc[-1]), payload["soc_end_kwh"], 1e-6, " kWh")
+    check("图6-9 参考充电合计", float(ref_c.sum()), 20663.215081, 0.01, " kWh")
+    check("图6-9 参考放电合计", float(ref_g.sum()), 15373.025114, 0.01, " kWh")
+    check("图6-9 实际充电合计", float(c.sum()), 18536.499875, 0.01, " kWh")
+    check("图6-9 实际放电合计", float(g.sum()), 15014.782713, 0.01, " kWh")
+    check("图6-9 剩余电量合计", float(w.sum()), 22.461233, 0.01, " kWh")
+    check("图6-9 缺口合计", float(gap[gap > 0].sum()), 19623.191587, 0.01, " kWh")
+    check("图6-9 富余合计", float(gap[gap < 0].sum()), -18558.961108, 0.01, " kWh")
+    check("图6-9 紧急购电时段数", float((z > 1e-9).sum()), 25.0, 1e-9)
+    # 中图三层必须与浅灰缺口柱严丝合缝：缺口 = 放电 − 充电 + 紧急购电 − 剩余。
+    check("图6-9 缺口分解恒等式残差",
+          float(np.abs(gap - (g - c + z - w)).max()), 0.0, 1e-6, " kWh")
+    # 同一式子的另一读法：实际净负荷可由轨迹反算，用来说明浅灰柱取自实测而非估计。
+    check("图6-9 实际净负荷自洽残差",
+          float(np.abs(net - (nat + g - c + z - w)).max()), 0.0, 1e-6, " kWh")
+    check("图6-9 SOC 触及下界", float(soc.min()), 1200.0, 1e-9, " kWh")
+    check("图6-9 SOC 未越上界", float(max(soc.max() - 10800.0, 0.0)), 0.0, 1e-9, " kWh")
+
+    _Q4_REF_STATS = {
+        "day": day, "net": net, "nat": nat, "x": x, "gap": gap,
+        "ref_c": ref_c, "ref_g": ref_g, "c": c, "g": g, "z": z, "w": w,
+        "soc": soc, "emergency_seg": z > 1e-9,
+        "cut_charge": float(np.clip(ref_c - c, 0, None).sum()),
+        "add_discharge": float(np.clip(g - ref_g, 0, None).sum()),
+    }
+    return _Q4_REF_STATS
+
+
+def fig_6_9_q4_2_reference_replay(q2: dict, q4: dict) -> None:
+    st = _q4_ref_stats(q2, q4)
+    seg = np.arange(144)
+    soc_x = np.arange(145)
+
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 184 * MM), layout="constrained")
+    gs = fig.add_gridspec(3, 1, height_ratios=[1.0, 1.0, 0.80])
+    fig.get_layout_engine().set(hspace=0.16)
+
+    # ------------------------------------------------- a 参考动作与实际动作
+    ax = fig.add_subplot(gs[0])
+    # 参考柱占满整段、实际柱窄一半叠在正中：深浅之外再加宽度差，
+    # 黑白打印时不会把「参考」误读成「实际」的浅色版本。
+    ax.bar(seg, st["ref_c"], width=1.0, align="edge", color=GRAYBLUE, linewidth=0)
+    ax.bar(seg, -st["ref_g"], width=1.0, align="edge", color=GRAYBLUE, linewidth=0)
+    ax.bar(seg + 0.21, st["c"], width=0.58, align="edge", color=BLUE, linewidth=0)
+    ax.bar(seg + 0.21, -st["g"], width=0.58, align="edge", color=BLUE, linewidth=0)
+    ax.axhline(0, color=INK, linewidth=0.7)
+    ax.set_ylim(-980, 980)
+    ax.set_title("a　参考动作与实际动作", loc="left", pad=4, fontsize=9.4)
+    ax.set_ylabel("充放电量 / kWh\n（每 10 分钟）")
+    time_ticks(ax, 24)
+    style(ax)
+    note(ax, 0.005, 0.97,
+         f"向上充电、向下放电　|　参考充/放 {st['ref_c'].sum():,.0f} / {st['ref_g'].sum():,.0f} kWh，"
+         f"实际充/放 {st['c'].sum():,.0f} / {st['g'].sum():,.0f} kWh",
+         va="top", color=INK)
+    ax.legend(handles=[Patch(facecolor=GRAYBLUE, label="参考动作（SAA 情景平均）"),
+                       Patch(facecolor=BLUE, label="实际执行动作")],
+              loc="lower right", bbox_to_anchor=(1.0, 1.0), ncol=2, frameon=False,
+              handlelength=1.3, columnspacing=1.2)
+
+    # ------------------------------------------------- b 供需偏差与补救构成
+    ax = fig.add_subplot(gs[1])
+    # 中灰全宽柱＝待补的缺口本身；窄柱＝把它补掉的三种机制。
+    # 三者之和恒等于全宽柱高度，所以窄柱必然把灰柱填满，不残留。
+    # 缺口柱用中灰而非浅灰：浅灰在 144 根窄柱的缝隙里几乎看不见，读者就只
+    # 看到补救构成、看不到被补的那个缺口。橙柱另加白色斜纹边，
+    # 与灰度相近的灰柱在黑白打印时仍分得开。
+    ax.bar(seg, st["gap"], width=1.0, align="edge", color=GRAY, linewidth=0,
+           label="供需偏差（实际净负荷 − 计划购电量）")
+    ax.bar(seg + 0.25, st["g"], width=0.50, align="edge", color=BLUE, linewidth=0)
+    ax.bar(seg + 0.25, st["z"], width=0.50, align="edge", bottom=st["g"], color=ORANGE,
+           hatch="////", edgecolor="white", linewidth=0, label="紧急购电")
+    ax.bar(seg + 0.25, -st["c"], width=0.50, align="edge", color=BLUE, linewidth=0)
+    ax.bar(seg + 0.25, -st["w"], width=0.50, align="edge", bottom=-st["c"], color=GRAY_LT,
+           linewidth=0, label="剩余电量")
+    ax.axhline(0, color=INK, linewidth=0.7)
+    ax.set_ylim(-1000, 1000)
+    ax.set_title("b　供需偏差与补救构成", loc="left", pad=4, fontsize=9.4)
+    ax.set_ylabel("电量 / kWh\n（每 10 分钟）")
+    time_ticks(ax, 24)
+    style(ax)
+    note(ax, 0.005, 0.97,
+         f"缺口 {st['gap'][st['gap'] > 0].sum():,.0f} kWh、富余 {abs(st['gap'][st['gap'] < 0].sum()):,.0f} kWh"
+         f"（{int((np.abs(st['gap']) > 1e-6).sum())}/144 段非零）　|　"
+         f"逐段缺口 = 放电 − 充电 + 紧急购电 − 剩余，残差 0",
+         va="top", color=INK)
+    ax.legend(handles=[Patch(facecolor=GRAY, label="供需偏差（缺口 / 富余）"),
+                       Patch(facecolor=BLUE, label="储能放电（上）/ 充电（下）"),
+                       Patch(facecolor=ORANGE, hatch="////", edgecolor="white",
+                             label="紧急购电"),
+                       Patch(facecolor=GRAY_LT, label="剩余电量")],
+              loc="lower right", bbox_to_anchor=(1.0, 1.0), ncol=2, frameon=False,
+              handlelength=1.3, columnspacing=1.2)
+
+    # ------------------------------------------------- c 储电量轨迹与运行边界
+    ax = fig.add_subplot(gs[2])
+    for bound, tag, va in ((10800.0, "上限 10800 kWh", "bottom"),
+                           (1200.0, "下限 1200 kWh", "top")):
+        ax.axhline(bound, color=GRAY, linewidth=0.9, linestyle="--", dashes=(4, 2))
+        ax.text(143.5, bound + (170 if va == "bottom" else -170), tag, ha="right",
+                va=va, fontsize=7.2, color=GRAY)
+    ax.plot(soc_x, st["soc"], color=BLUE, linewidth=1.3, zorder=4)
+    hot = st["emergency_seg"]
+    ax.plot(soc_x[:144][hot], st["soc"][:144][hot], linestyle="none", marker="o",
+            markersize=2.7, color=ORANGE, zorder=5)
+    i_min = int(st["soc"].argmin())
+    ax.annotate(f"最低 {st['soc'].min():,.0f} kWh（{i_min // 6:02d}:{(i_min % 6) * 10:02d}）",
+                xy=(i_min, st["soc"].min()), xytext=(i_min + 6, 3600),
+                fontsize=7.4, color=INK, ha="left", va="center",
+                bbox=dict(boxstyle="square,pad=0.28", facecolor="white",
+                          edgecolor="none", alpha=0.9),
+                arrowprops=dict(arrowstyle="-|>", color=GRAY, linewidth=0.8))
+    ax.set_ylim(0, 11500)
+    ax.set_title("c　储电量轨迹与运行边界", loc="left", pad=4, fontsize=9.4)
+    ax.set_ylabel("储电量 / kWh")
+    ax.set_xlabel("时间（区间起点）")
+    time_ticks(ax, 24)
+    style(ax)
+    note(ax, 0.005, 0.97,
+         f"起点 {st['soc'][0]:,.0f} kWh → 日末 {st['soc'][-1]:,.0f} kWh　|　"
+         f"全程落在运行边界内，其中 {int((np.abs(st['soc'] - 1200.0) < 1e-6).sum())} 段压在下限上",
+         va="top", color=INK, box=True)
+    ax.legend(handles=[Line2D([], [], color=BLUE, linewidth=1.3, label="储电量"),
+                       Line2D([], [], color=GRAY, linewidth=0.9, linestyle="--",
+                              dashes=(4, 2), label="运行边界"),
+                       Line2D([], [], color=ORANGE, marker="o", markersize=3.0,
+                              linestyle="none", label="紧急购电时段")],
+              loc="lower right", bbox_to_anchor=(1.0, 1.0), ncol=3, frameon=False,
+              handlelength=1.3, columnspacing=1.2)
+
+    save(fig, "fig_6_9_q4_2_reference_replay")
+
+
 # ============================================================= 附件5 对账抽查
 def crosscheck_annex5(q1: dict, q4: dict) -> None:
     from openpyxl import load_workbook
@@ -1144,6 +1327,39 @@ CAPTIONS = {
         [Q4 / "payload_q4-2_K30.json", Q4 / "payload_q4-3_K30.json",
          Q4 / "summary_q4-2_K30.json", Q4 / "summary_q4-3_K30.json"],
     ),
+    "fig_6_9_q4_2_reference_replay": (
+        "图6-9　4-2 策略的参考调度与实际补救过程",
+        [
+            "以 2025-09-23 为代表日（当日情景数 14，为评价期内的上限档）。上图比较 SAA 情景平均参考"
+            "充放电量与实际执行量：参考充电 20663.22 kWh、参考放电 15373.03 kWh，实际充电 18536.50 kWh、"
+            "实际放电 15014.78 kWh，即实际相对参考少充 2126.72 kWh、少放 358.24 kWh。"
+            "按段统计，削减充电合计 3793.96 kWh、追加放电合计 2869.29 kWh，"
+            "与“缺电时先削充电、不足再追加放电、仍有缺口才紧急购电”的补救次序一致。",
+            "中图以灰色柱给出实际供需偏差（实际净负荷 − 计划购电量），当日缺额合计 19623.19 kWh、"
+            "富余合计 18558.96 kWh。缺口由储能放电（蓝，向上）与紧急购电（橙，斜纹，向上）逐级补足，"
+            "富余由储能充电（蓝，向下）与剩余电量（浅灰，向下）吸收；窄柱之和逐段严格等于灰柱高度"
+            "（残差为 0），即缺口 = 放电 − 充电 + 紧急购电 − 剩余，不残留未被覆盖的偏差。",
+            "当日紧急购电 4608.41 kWh，集中在 25 个时段，最大单段 827.18 kWh；"
+            "这些时段在下图以橙点标出，可见紧急购电发生在储电量已被用到接近下限的时段。",
+            "下图给出储电量变化：自 1217.94 kWh 出发，全程落在 1200—10800 kWh 运行边界之内，"
+            "其中 25 段恰好压在下限 1200.00 kWh 上，日末回到 1217.69 kWh，与起点几乎一致。"
+            "补救过程把缺口补满，同时没有越出储能的物理边界。",
+        ],
+        "代表日 2025-09-23，属 2025-02-01 至 2025-12-31 评价期；自然日 144 段，时间标签为区间起点；"
+        "电量为 kWh（每 10 分钟）；储电量为 kWh。参考轨迹含 τ=144 的日末边界，"
+        "与实际 144 段动作比较时取前 144 项。",
+        "q4/q4/q4-2_reference_trajectory_K30.npz（重跑保存的情景平均参考轨迹）、"
+        "q4/q4/payload_q4-2_K30.json（交付工作簿 payload）与 "
+        "q4/q4/q4-2_reference_replay_verification.json（独立重放检验报告）；"
+        "实际净负荷取自 data/data 附件，经 src/src/q2_solver.py:load_inputs 读取。",
+        "计划购电量按自然日口径执行：00:00 段承接前一日的午夜承诺，其余段沿用当日计划，"
+        "当日计划购电量合计 61109.54 kWh（与交付 payload 一致）。"
+        "本图只还原一个代表日的执行链路，用来说明参考动作如何被逐时段修正为实际动作，"
+        "不构成全年费用或节省结论。模型为滚动两阶段 / SAA 近似，不属严格多阶段随机最优模型；"
+        "该日执行过程可复现也不等于最优解唯一或全年全局最优。",
+        [REF_TRAJ, Q4 / "payload_q4-2_K30.json",
+         Q4 / "q4-2_reference_replay_verification.json"],
+    ),
 }
 
 
@@ -1250,6 +1466,7 @@ def main() -> None:
     fig_6_6_shapley(q3)
     fig_6_7(q4)
     fig_6_8(q4)
+    fig_6_9_q4_2_reference_replay(q2, q4)
 
     # 外挂图件由同级脚本各自生成（各脚本自带数据源与对账），此处只核对产物存在。
     # 它们不进上面这段绘制流程，只登记到图注与清单里。
@@ -1272,6 +1489,7 @@ def main() -> None:
         "fig_6_6_q3_shapley_allocation",
         "fig_6_7_q4_aggregate_comparison",
         "fig_6_8_q4_daily_and_cumulative_savings",
+        "fig_6_9_q4_2_reference_replay",
     ]
     from PIL import Image
 
