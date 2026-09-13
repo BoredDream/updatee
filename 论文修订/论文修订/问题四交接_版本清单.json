@@ -1,0 +1,206 @@
+{
+  "checked_at_local": "2026-09-13T07:25:05.666904+08:00",
+  "workspace": "C:\\Users\\牛滢芳\\Desktop\\new",
+  "repository": "C:\\Users\\牛滢芳\\Desktop\\new\\new",
+  "server": "yingfang@218.199.69.58:22",
+  "remote_repository": "/home/yingfang/model-runs/code1-q3-q43-20260913",
+  "meaning": "Hash equality establishes snapshot identity, not mathematical correctness. Null means remote counterpart was not compared.",
+  "files": [
+    {
+      "relative_to_repo": "outputs/q4/detail_q4-2_K30.npz",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\detail_q4-2_K30.npz",
+      "sha256": "c18bbb896f2d37a7ce3b1bd540a5c8d5faed1c71de59f90b6ba8e95417dd32f4",
+      "bytes": 1771504,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/q4/detail_q4-3_K30.npz",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\detail_q4-3_K30.npz",
+      "sha256": "b16ece3ef76e758e28cf0f08102ea242ed139cf12e451cccce788bbb23847530",
+      "bytes": 1931309,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/q4/payload_q4-2_K30.json",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\payload_q4-2_K30.json",
+      "sha256": "f5fb272e5dae3b35290cf5b2833477f70214ff7547b4d203f6021a676e578fce",
+      "bytes": 1724578,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/q4/payload_q4-3_K30.json",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\payload_q4-3_K30.json",
+      "sha256": "de3d11a01388beca5c5108fab7b571c5d7eaa92e7d547a93e96e16490ba93481",
+      "bytes": 1758062,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/q4/summary_q4-2_K30.json",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\summary_q4-2_K30.json",
+      "sha256": "c26723f1f4a1f53fb9ca9341c47e524dd8b488d4c1f5ae8b2a44ffdab5e88e11",
+      "bytes": 205516,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/q4/summary_q4-3_K30.json",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\q4\\summary_q4-3_K30.json",
+      "sha256": "8407567341e7f6776a77366e496a30e089ec95bfd1e4a95752d5dfce6db7c1ca",
+      "bytes": 222485,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "outputs/论文修订/简洁_问题一二三修订.md",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\论文修订\\简洁_问题一二三修订.md",
+      "sha256": "02e93223afa6742220fae3ca8b7552416122627941f2d3567cb404dc5bc89311",
+      "bytes": 98031,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "outputs/论文修订/问题三修改说明.md",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\outputs\\论文修订\\问题三修改说明.md",
+      "sha256": "273ea59d5b4976db913cfa29fed5ace4122fdfc7bcddb4e686553008f73338d5",
+      "bytes": 4904,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "problem/data/附件1.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件1.xlsx",
+      "sha256": "66b87134f5ecccd68184d3539bb1293ef039f9e0fdd955a589b9bfa7f227c377",
+      "bytes": 16003,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "problem/data/附件2.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件2.xlsx",
+      "sha256": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72",
+      "bytes": 907128,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "problem/data/附件3.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件3.xlsx",
+      "sha256": "8a61b06c52bd0d639a1cc37c61a7d9f5b75edcbca718f64c1bd3498ec9f9d843",
+      "bytes": 293526,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "problem/data/附件4.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件4.xlsx",
+      "sha256": "20e9c93aeab5e8e21ae4dd15587f9e190f7408692504c1319598461cd654fe71",
+      "bytes": 409790,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "problem/data/附件5/result4-2.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件5\\result4-2.xlsx",
+      "sha256": "ed175984d25ef3943040e6174a686313d99ea49f9e7b0b85c6e04dc4550e783a",
+      "bytes": 510744,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "problem/data/附件5/result4-3.xlsx",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\problem\\data\\附件5\\result4-3.xlsx",
+      "sha256": "47099563e158ff87bd0949a5bd8f7a3dc5e0815bf67cf630b7d9aca846d38e32",
+      "bytes": 1064280,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/assemble_q4_controlled.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\assemble_q4_controlled.py",
+      "sha256": "6ee324bb6ad907d76f57413e6d060dac3f7eeb1b9c56d658423a53e7243b81c3",
+      "bytes": 3431,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/export_q4.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\export_q4.py",
+      "sha256": "621637fdc3893cd65dea55318bbd767372a3e3c68ce7745396ce257b15f98aa6",
+      "bytes": 6763,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/q4_lambda_sensitivity.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\q4_lambda_sensitivity.py",
+      "sha256": "bd96ec7252289cbc1c75dd3e647a61a24dd2cf45fe30bf3cb4f120350d5f6265",
+      "bytes": 12139,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/q4_perfect_foresight.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\q4_perfect_foresight.py",
+      "sha256": "cf4976fcc26ff9dbe01e380c3b59ce8486d9b72fc90529912e54b21d34dd9fe1",
+      "bytes": 11157,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/q4_solver_uniqueness_check.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\q4_solver_uniqueness_check.py",
+      "sha256": "4cb9e6e585b5dbf958df9852902a53c0eca91ae57de592992a3e3a6821506c21",
+      "bytes": 12477,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/report_q4.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\report_q4.py",
+      "sha256": "3ede898f0efcb434b229a38745654de66c1afa2d2af1ad88fe3c05c0a8270969",
+      "bytes": 40607,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/validate_q4.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\validate_q4.py",
+      "sha256": "295045e9360dd75fff067215915168688b029c9eb7845aed4cf56d7fc7b85ac4",
+      "bytes": 10509,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "scripts/verify_q4.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\scripts\\verify_q4.py",
+      "sha256": "42f36e7c4481f913daab3901dc40d3070f18c0946cd05c559c981867d753484e",
+      "bytes": 18397,
+      "server_sha256_matches": null
+    },
+    {
+      "relative_to_repo": "src/efficiency.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\efficiency.py",
+      "sha256": "2581d05e5a87bbb6e44ea78b5abcdc22219abdb33cc5f3b2da488922e71532a4",
+      "bytes": 1220,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "src/q1_solver.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\q1_solver.py",
+      "sha256": "b10f690b0eb49ed9fa9c2c862972bae1d1a03291893f2e1f0d5828470aeed142",
+      "bytes": 27994,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "src/q2_solver.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\q2_solver.py",
+      "sha256": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8",
+      "bytes": 32700,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "src/q3_multistage.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\q3_multistage.py",
+      "sha256": "9c6c7a0a780643954082109e92e7747e32d7cf36098975bffab7bd5a39287b7d",
+      "bytes": 26617,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "src/q4_q2_solver.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\q4_q2_solver.py",
+      "sha256": "00e5733e8995b50758580cb85888e684f1bd9fbb29c3b243ccb7c3ff4783a87c",
+      "bytes": 5596,
+      "server_sha256_matches": true
+    },
+    {
+      "relative_to_repo": "src/q4_solver.py",
+      "absolute_path": "C:\\Users\\牛滢芳\\Desktop\\new\\new\\src\\q4_solver.py",
+      "sha256": "26db080d8a8774d1c6dfc21aaf65e546c162b2498aacc76fd6440b3966f70e04",
+      "bytes": 19086,
+      "server_sha256_matches": true
+    }
+  ]
+}

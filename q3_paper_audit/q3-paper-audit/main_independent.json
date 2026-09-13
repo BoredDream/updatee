@@ -1,0 +1,39 @@
+{
+  "result": {
+    "tag": "0123",
+    "total_cost_yuan": 13193305.636975596,
+    "plan_cost_yuan": 12101643.929898042,
+    "adjust_cost_yuan": 876491.8600308168,
+    "emergency_cost_yuan": 215169.84704675697,
+    "worst_day": "2025-02-01",
+    "worst_day_gap": 0.0
+  },
+  "worst": {
+    "[0123] 逐日总费用 vs payload": 0.0,
+    "[0123] 交付期计划购电费 vs summary": 0.0,
+    "[0123] 交付期调整相关费用 vs summary": 0.0,
+    "[0123] 交付期紧急购电费 vs summary": 0.0,
+    "[0123] 交付期总费用 vs summary": 0.0,
+    "[0123] 交付期 emergency_kwh vs summary": 0.0,
+    "[0123] 交付期 charge_kwh vs summary": 2.7939677238464355e-09,
+    "[0123] 交付期 discharge_kwh vs summary": 1.862645149230957e-09,
+    "[0123] 交付期 curtail_kwh vs summary": 0.0,
+    "[0123] 交付期 adjust_up_kwh vs summary": 4.656612873077393e-10,
+    "[0123] 交付期 adjust_down_kwh vs summary": 1.1641532182693481e-10,
+    "[0123] SOC 递推残差/kWh": 0.0,
+    "[0123] 充电量超上限/kWh": 0.0,
+    "[0123] 放电量超上限/kWh": 0.0,
+    "[0123] SOC 低于下限/kWh": 0.0,
+    "[0123] SOC 高于上限/kWh": 0.0,
+    "[0123] 负数电量/kWh": 0.0,
+    "[0123] 同时充放电/kWh": 0.0,
+    "[0123] 跨日 SOC 不连续/kWh": 0.0,
+    "[0123] 首日初始 SOC 偏离 6000/kWh": 0.0,
+    "[0123] 重放充电量 vs 明细/kWh": 0.0,
+    "[0123] 重放放电量 vs 明细/kWh": 0.0,
+    "[0123] 重放紧急购电 vs 明细/kWh": 0.0,
+    "[0123] 重放弃电 vs 明细/kWh": 0.0,
+    "[0123] 重放 SOC 轨迹 vs 明细/kWh": 0.0
+  },
+  "failures": []
+}
