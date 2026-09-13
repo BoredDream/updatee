@@ -1,6 +1,6 @@
 # 论文图件图注与分析
 
-生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.0.0）　生成时间：2026-09-13T11:23:10
+生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.0.0）　生成时间：2026-09-13T11:28:46
 
 本文件同时收录由同级脚本生成的图件，各自的数据源与自检见各脚本：`scripts/scripts/render_pv_interpolation_figure.py`（`fig_5_2_pv_forecast_interpolation`）；`scripts/scripts/render_data_characteristics_figure.py`（`fig_5_3_annual_data_heatmap`）；`scripts/scripts/render_dispatch_overview_figure.py`（`fig_6_1_q1_price_and_storage_dispatch`）；`scripts/scripts/render_period_cost_figure.py`（`fig_6_2_q1_period_cost_difference`）。
 

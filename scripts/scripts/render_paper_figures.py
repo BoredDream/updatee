@@ -526,9 +526,13 @@ def fig_6_3(q3: dict) -> None:
     base = st["totals"]["0-only"] / 1e4
     saving = st["saving"]
 
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 150 * MM))
-    gs = fig.add_gridspec(2, 1, height_ratios=[1.0, 0.72], hspace=0.20,
-                          left=0.088, right=0.982, top=0.892, bottom=0.088)
+    # 交给 constrained 布局排边距：两面板的纵轴标签都是两行竖排
+    # （「总费用」/「万元」），手工给的 left 一旦小于它们加刻度标签的宽度，
+    # 最左侧那行字就会被画到画布外裁掉。行距改用布局引擎的 hspace 控制。
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 150 * MM),
+                     layout="constrained")
+    gs = fig.add_gridspec(2, 1, height_ratios=[1.0, 0.72])
+    fig.get_layout_engine().set(hspace=0.09)
     # 紧急费用改用深蓝阶梯而非橙色：左上角的橙色文字已经在讲「节省」，
     # 同一坐标系里再放橙色柱，橙色会同时指向成本与收益两个相反含义。
     # 三段蓝的相邻边界灰阶为 84|185 与 185|56，黑白打印下逐界可分。

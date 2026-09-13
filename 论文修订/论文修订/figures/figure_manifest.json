@@ -2,7 +2,7 @@
   "generator": {
     "script": "scripts/scripts/render_paper_figures.py",
     "version": "3.0.0",
-    "generated_at": "2026-09-13T11:23:10",
+    "generated_at": "2026-09-13T11:28:46",
     "python": "3.13.12",
     "matplotlib": "3.11.1",
     "numpy": "2.4.1",

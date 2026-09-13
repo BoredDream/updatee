@@ -186,6 +186,11 @@ def day_ticks(ax):
     ax.set_xlim(0, 1440)
     ax.set_xticks(np.arange(0, 1440 + 1, 120))
     ax.set_xticklabels([hm(v) for v in np.arange(0, 1440 + 1, 120)])
+    # 首末刻度正好落在轴的两端，标签居中会各越出半个字宽：24:00 一直顶到
+    # 画布右缘（只剩 2 px），与其余图件的 ~22 px 留白不一致。改为向内对齐，
+    # 与图5-3 的处理相同。
+    ax.get_xticklabels()[0].set_ha("left")
+    ax.get_xticklabels()[-1].set_ha("right")
 
 
 def draw(ax, c: dict, xlim, ylim, *, show_prefix: bool, lw_main: float = 1.5):
@@ -295,6 +300,8 @@ def fig_5_2(c: dict, stats: dict) -> None:
                   loc="left", pad=6)
     axb.set_xticks(np.arange(x0, x1 + 1, 30))
     axb.set_xticklabels([hm(v) for v in np.arange(x0, x1 + 1, 30)])
+    axb.get_xticklabels()[0].set_ha("left")       # 18:00 落在左端
+    axb.get_xticklabels()[-1].set_ha("right")     # 20:00 落在右端，居中会越出画布
     axb.axhline(0, color=INK, lw=0.7, zorder=3)
 
     # 最低点位于 19:20，注记向左展开，避免越出右边界
