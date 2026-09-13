@@ -2,7 +2,7 @@
   "generator": {
     "script": "scripts/scripts/render_paper_figures.py",
     "version": "2.0.0",
-    "generated_at": "2026-09-13T09:46:29",
+    "generated_at": "2026-09-13T10:18:33",
     "python": "3.13.12",
     "matplotlib": "3.11.1",
     "numpy": "2.4.1",
@@ -71,10 +71,10 @@
       "pdf": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.png",
       "width_mm": 159.97,
-      "height_mm": 247.95,
+      "height_mm": 191.97,
       "png_px": [
         3149,
-        4881
+        3779
       ],
       "dpi": 500,
       "data_sources": [
@@ -102,10 +102,10 @@
       "pdf": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.pdf",
       "png": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.png",
       "width_mm": 159.97,
-      "height_mm": 207.98,
+      "height_mm": 177.95,
       "png_px": [
         3149,
-        4094
+        3503
       ],
       "dpi": 500,
       "data_sources": [

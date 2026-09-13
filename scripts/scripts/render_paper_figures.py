@@ -385,8 +385,9 @@ def fig_6_1(q1: dict) -> None:
     check("问题一24:00储电量", soc[-1], 6000.0, 1e-6, " kWh")
 
     x = np.arange(144)
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 248 * MM), layout="constrained")
-    gs = fig.add_gridspec(5, 1, height_ratios=[1.15, 0.62, 0.80, 0.80, 0.72])
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 192 * MM), layout="constrained")
+    gs = fig.add_gridspec(5, 1, height_ratios=[1.00, 0.28, 0.60, 0.60, 0.55],
+                          hspace=0.06)
     axes = []
 
     # ---- a 负荷 / 光伏 / 购电
@@ -426,33 +427,29 @@ def fig_6_1(q1: dict) -> None:
 
     # ---- c 储能充放电动作
     ax = fig.add_subplot(gs[2]); axes.append(ax)
-    ax.bar(x, charge, width=1.0, color=BLUE, linewidth=0, label="充电量（零线上方）")
-    ax.bar(x, -discharge, width=1.0, color=GRAYBLUE, linewidth=0,
-           label="放电量（零线下方）")
+    ax.bar(x, charge, width=1.0, color=BLUE, linewidth=0)
+    ax.bar(x, -discharge, width=1.0, color=GRAYBLUE, linewidth=0)
     ax.axhline(0, color=INK, linewidth=0.8)
     ax.set_ylabel("充（+）/ 放（−）\n电量 / kWh")
     ax.set_ylim(-1000, 1050)
-    ax.set_title("c　储能充放电动作", loc="left", pad=4)
+    ax.set_title("c　储能充放电动作（充电为正、放电为负）", loc="left", pad=4)
     time_ticks(ax); style(ax)
-    ax.legend(loc="lower left", ncol=2, frameon=True, facecolor="white",
-              edgecolor=GRAY_LT, framealpha=0.95, handlelength=1.6)
-    note(ax, 0.995, 0.06,
-         f"累计充电 {charge.sum():,.2f} kWh，累计放电 {discharge.sum():,.2f} kWh",
-         ha="right", va="bottom", size=7.4)
 
     # ---- d 储电量状态 SOC
     ax = fig.add_subplot(gs[3]); axes.append(ax)
     ax.plot(x, soc[:-1], color=BLUE, linewidth=1.5, marker="o", markersize=2.2,
             markevery=24, markerfacecolor="white", markeredgewidth=0.8,
             label="储电量 SOC")
+    bbox = dict(boxstyle="square,pad=0.18", facecolor="white", edgecolor="none",
+                alpha=0.9)
     for value, lab, va in ((10800, "上限 10800 kWh", "bottom"),
                            (1200, "下限 1200 kWh", "top")):
         ax.axhline(value, color=ORANGE, linewidth=1.0, linestyle=(0, (1, 2)))
-        ax.text(143, value + (150 if va == "bottom" else -150), lab, ha="right",
-                va=va, fontsize=7.2, color=ORANGE)
+        ax.text(2, value + (170 if va == "bottom" else -170), lab, ha="left",
+                va=va, fontsize=7.2, color=ORANGE, bbox=bbox)
     ax.axhline(6000, color=GRAY, linewidth=0.9, linestyle=(0, (5, 2, 1, 2)))
-    ax.text(2, 6180, "首末储电量 6000 kWh", ha="left", va="bottom",
-            fontsize=7.2, color=GRAY)
+    ax.text(143, 6180, "首末储电量 6000 kWh", ha="right", va="bottom",
+            fontsize=7.2, color=GRAY, bbox=bbox)
     ax.set_ylabel("储电量 SOC /\nkWh")
     ax.set_ylim(0, 12200)
     ax.set_yticks([1200, 6000, 10800])
@@ -472,7 +469,7 @@ def fig_6_1(q1: dict) -> None:
     ax.axhline(0, color=INK, linewidth=0.8)
     ax.set_ylabel("分段费用增减 /\n元（储能 − 无储能）")
     ax.set_xlabel("自然日时间（区间起点）")
-    ax.set_ylim(-9200, 4300)
+    ax.set_ylim(-9200, 6400)
     ax.set_title("e　储能相对无储能的 4 小时分段费用增减", loc="left", pad=4)
     time_ticks(ax); style(ax)
     for cx, d in zip(centers, deltas):
@@ -480,17 +477,15 @@ def fig_6_1(q1: dict) -> None:
                 va="bottom" if d > 0 else "top", fontsize=7.4,
                 color=ORANGE if d > 0 else BLUE)
     pos = deltas[1] + deltas[4]
-    t = ax.text(0.995, 0.96,
-                f"04:00—08:00 与 16:00—20:00 合计节省 {-pos:,.2f} 元，"
-                f"占全天净节省 {100 * -pos / saving:.2f}%",
-                transform=ax.transAxes, ha="right", va="top", fontsize=7.8,
+    t = ax.text(0.005, 0.97,
+                f"04:00—08:00 与 16:00—20:00 合计节省 {-pos:,.2f} 元"
+                f"（占净节省 {100 * -pos / saving:.2f}%）",
+                transform=ax.transAxes, ha="left", va="top", fontsize=7.8,
                 color=GRAY)
     t.set_in_layout(False)
-    for label, series in (("充电量（零线上方）", None),):
-        pass
     ax.legend([Patch(facecolor=ORANGE), Patch(facecolor=BLUE)],
-              ["该段支出增加", "该段节省"], loc="lower left", frameon=True,
-              facecolor="white", edgecolor=GRAY_LT, framealpha=0.95, ncol=2)
+              ["该段支出增加", "该段节省"], loc="lower right", frameon=True,
+              facecolor="white", edgecolor=GRAY_LT, framealpha=0.95, ncol=1)
 
     for a in axes[:-1]:
         a.set_xticklabels([])
@@ -527,8 +522,8 @@ def fig_6_2(q2: dict) -> None:
     check("问题二MAE与紧急购电Pearson相关", r_p, 0.315540, 1e-4)
     check("问题二MAE与紧急购电Spearman相关", r_s, 0.074394, 1e-4)
 
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 208 * MM), layout="constrained")
-    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.0, 0.88])
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 178 * MM), layout="constrained")
+    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.0, 0.72], hspace=0.06)
 
     for k, day in enumerate(q2["days"]):
         ax = fig.add_subplot(gs[k // 2, k % 2])
