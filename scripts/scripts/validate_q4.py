@@ -39,6 +39,16 @@ def main() -> int:
     K = sys.argv[2] if len(sys.argv) > 2 else "30"
     assert which in ("2", "3"), "variant 必须是 2 或 3"
     payload = json.loads((OUT / f"payload_q4-{which}_K{K}.json").read_text(encoding="utf-8"))
+    if which == "3":
+        expected_policy = M.price_objective_policy()
+        summary = json.loads((OUT / f"summary_q4-{which}_K{K}.json").read_text(encoding="utf-8"))
+        for artifact, meta in (("payload", payload["meta"]), ("summary", summary["meta"])):
+            actual_policy = {k: meta.get(k) for k in expected_policy}
+            if actual_policy != expected_policy:
+                raise ValueError(
+                    f"Q4-3 {artifact} 价格目标元数据不一致："
+                    f"{actual_policy!r} != {expected_policy!r}"
+                )
     detail = np.load(OUT / f"detail_q4-{which}_K{K}.npz")
     dates = [str(d) for d in detail["dates"]]
     x, q, z, c, g, w, S = (detail[k] for k in ("x", "q", "z", "c", "g", "w", "S"))

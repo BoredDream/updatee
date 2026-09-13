@@ -7,6 +7,10 @@
     "plan_adjust_time_frame": "template_row_00:10_to_next_00:10",
     "physical_reporting_time_frame": "natural_day_00:00_to_24:00",
     "settlement_price": "actual_price_附件4",
+    "shared_price_basis": "center_forecast",
+    "recourse_price_basis": "scenario_price",
+    "objective_type": "hybrid_center_and_scenario_recourse",
+    "scenario_price_centering": "not_recentered",
     "scenarios_K": 30,
     "stages": [
       0,

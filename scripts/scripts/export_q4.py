@@ -98,12 +98,14 @@ if __name__ == "__main__":
                      ("adjust_up_kwh", up), ("adjust_down_kwh", dn)):
             totals[k] += float(v)
 
+    price_policy = M.price_objective_policy() if which == "3" else {}
     meta = {"model": "q4_fluctuating_price_two_stage_saa", "variant": which,
             "storage_convention": "bus_side_charge_and_discharge",
             "soc_recursion": "S[t] = S[t-1] + eta_charge*c[t] - g[t]/eta_discharge",
             "plan_adjust_time_frame": "template_row_00:10_to_next_00:10",
             "physical_reporting_time_frame": "natural_day_00:00_to_24:00",
             "settlement_price": "actual_price_附件4",
+            **price_policy,
             "scenarios_K": K, "stages": list(stages), "elapsed_seconds": elapsed,
             "eta": M.ETA_CHARGE, "eta_charge": M.ETA_CHARGE,
             "eta_discharge": M.ETA_DISCHARGE,

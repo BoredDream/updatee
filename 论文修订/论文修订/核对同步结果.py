@@ -1,5 +1,6 @@
-"""只读核对现有 Q4 结果，JSON 输出至标准输出；不重跑或修改求解器。"""
+"""只读核对现有 Q4 结果；JSON 输出至标准输出，也可用 --output 同步保存。"""
 from pathlib import Path
+import argparse
 import contextlib
 import hashlib
 import importlib.util
@@ -9,6 +10,10 @@ import sys
 from datetime import datetime
 from openpyxl import load_workbook
 from openpyxl.utils.datetime import from_excel
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--output", type=Path)
+args = parser.parse_args()
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("q4_independent", ROOT / "scripts/scripts/verify_q4.py")
@@ -79,5 +84,8 @@ report = {
     "selected_days": selected,
     "log": log.getvalue(),
 }
-print(json.dumps(report, ensure_ascii=False, indent=2))
+rendered = json.dumps(report, ensure_ascii=False, indent=2)
+print(rendered)
+if args.output:
+    args.output.write_text(rendered + "\n", encoding="utf-8")
 sys.exit(bool(v.failures))

@@ -1,5 +1,7 @@
 {
   "checked_at_local": "2026-09-13T07:25:05.666904+08:00",
+  "snapshot_status": "historical_pre_scheme_a",
+  "superseded_local_audit": "work/audit-714645a/gates/code-verifier-loop-2.yaml",
   "workspace": "C:\\Users\\牛滢芳\\Desktop\\new",
   "repository": "C:\\Users\\牛滢芳\\Desktop\\new\\new",
   "server": "yingfang@218.199.69.58:22",

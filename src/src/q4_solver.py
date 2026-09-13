@@ -7,10 +7,11 @@
   1) 0:00 时当天电价未知，必须先建电价预测模型；6/12/18 点可用已实现电价滚动修正；
   2) 违约价/紧急价都定义为"交易时刻电价"的倍数，所以相对价格结构不变，
      费用化简式 C_t = 0.5 p x + 0.5 p q + p (q-x)^+ + 5 p z 原样成立；
-  3) 目标里出现 E[p·q]。由于同一阶段的 here-and-now 决策不带场景下标，
-     其系数取 E[p]；而 recourse 变量 q^k、z^k 与价格同场景配对，用 p^k。
-     ⇒ 报童条件从概率分位数变成"价格加权分位数"
-        E[p·1{D>q}]/E[p] ∈ [0.1, 0.3] 时不调整。
+  3) 本模型有意采用混合价格目标：不带场景下标的共享合同决策使用当前阶段的
+     中心预测价 p_center；未来合同 q^k、超计划项 u^k 和紧急购电 z^k 等
+     价格相关 recourse 项与价格场景配对，使用 p^k。
+     价格残差场景不为满足 p_center=mean_k(p^k) 而重新中心化，因此该目标不是
+     将全部价格项置于同一场景均值下的严格统一 SAA 期望费用。
 
 口径（与问题 1/2/3 一致，见 README「固定口径」）：
   * 区间起点和物理参数一致，但报表时间框不同：计划/调整保留模板行，
@@ -53,11 +54,22 @@ PMAT = pd.read_excel(UP+'附件4.xlsx', header=0).iloc[:, 1:].to_numpy(float)   
 WIN = 20            # 电价形态滚动窗口(天)
 PHI_PRIOR = 0.0     # 无历史时不外推瞬时偏离；不使用评价期离线调参
 ALPHA = 5.0         # LP 中紧急电价倍数
+PRICE_OBJECTIVE_POLICY = {
+    "shared_price_basis": "center_forecast",
+    "recourse_price_basis": "scenario_price",
+    "objective_type": "hybrid_center_and_scenario_recourse",
+    "scenario_price_centering": "not_recentered",
+}
 _PHAT_CACHE = {}
 _PHI_CACHE = {}
 # 附件2缺少2025-01-01 00:00--00:10。Q4显式保留附件1仅作这一段冷启动，
 # 不把它混入附件4结算价或交付期统计。
 Q4_COLD_MIDNIGHT_LG = midnight_actual(0)
+
+
+def price_objective_policy():
+    """返回 Q4-3 价格目标口径；返回副本以免导出脚本改动模块常量。"""
+    return dict(PRICE_OBJECTIVE_POLICY)
 
 
 def midnight_center4(d):
@@ -191,9 +203,12 @@ def scenarios4_145(d, K=30):
 # ----------------------------------------------------------------------
 # 3. 阶段 LP（价格随机版）
 # ----------------------------------------------------------------------
-def stage_lp4(m, x_ref, S_cur, scenL, scenG, scenP, pdet,
+def stage_lp4(m, x_ref, S_cur, scenL, scenG, scenP, p_center,
               adjust=True, alpha=ALPHA, lam=0.478, commit_end=None):
     """第 m 阶段两阶段随机 LP。
+
+    共享合同项使用中心预测价 p_center；未来合同、超计划和紧急购电等
+    价格相关场景追索项使用 scenP[k]。二者不要求具有相同的样本均值。
 
     adjust=False 时（问题 4-2）不设 recourse 购电变量，即 q≡x，
     费用退化为 p·x + 5p·z，与问题 2 完全一致。
@@ -221,15 +236,15 @@ def stage_lp4(m, x_ref, S_cur, scenL, scenG, scenP, pdet,
     o = lambda k: base + k*per
 
     c = np.zeros(nv)
-    # here-and-now 决策不带场景下标，其价格系数取期望电价 pdet
+    # 方案A：共享合同决策固定使用中心预测价，不以场景均价替代。
     if stage0:
         # t<tn 的计划即最终合约(不可再调) -> 系数 p；t>=tn 的计划只承担一半 -> 0.5p
         for t in dec:
-            c[dpos[t]] = pdet[t] if t < tn else 0.5*pdet[t]
+            c[dpos[t]] = p_center[t] if t < tn else 0.5*p_center[t]
     else:
         for i, t in enumerate(dec):
-            c[i] = 0.5*pdet[t]
-            c[nD+i] = pdet[t]                  # committed 段的超计划罚项
+            c[i] = 0.5*p_center[t]
+            c[nD+i] = p_center[t]              # committed 段的超计划罚项
 
     rows, cols, vals, beq = [], [], [], []
     iru, icu, ivu, bub = [], [], [], []
@@ -289,16 +304,16 @@ def stage_lp4(m, x_ref, S_cur, scenL, scenG, scenP, pdet,
     return r.x[:nD]
 
 
-def stage0_lp4_145(committed_q, S_cur, scenL, scenG, scenP, pdet, lam,
+def stage0_lp4_145(committed_q, S_cur, scenL, scenG, scenP, p_center, lam,
                    commit_end=TSTAGE[1]):
-    """波动电价下0:00的145段LP；h=0为前日已锁定午夜段。"""
+    """波动电价下0:00的145段LP；共享项使用 p_center，h=0为前日已锁定午夜段。"""
     K, H, tn = len(scenL), T+1, int(commit_end)
     if not (0 < tn <= T):
         raise ValueError(f"无效0:00承诺区间终点: {tn}")
     R, nD = list(range(tn, T)), T
     nR = len(R); per = 2*nR + 5*H; nv = nD + K*per
     def o(k): return nD + k*per
-    obj = np.zeros(nv); obj[:tn] = pdet[:tn]; obj[tn:nD] = 0.5*pdet[tn:]
+    obj = np.zeros(nv); obj[:tn] = p_center[:tn]; obj[tn:nD] = 0.5*p_center[tn:]
     rows=[]; cols=[]; vals=[]; beq=[]; iru=[]; icu=[]; ivu=[]; bub=[]; nr=nq=0
     for k in range(K):
         ok=o(k); oQ=ok; oU=ok+nR; oc=ok+2*nR; og=oc+H; oz=og+H; ow=oz+H; oS=ow+H
@@ -347,8 +362,9 @@ def solve_day4(d, S0, committed_q, K=30, stages=(0, 1, 2, 3)):
     first_adjust = TSTAGE[enabled[1]] if len(enabled) > 1 else T
     out = {k: np.zeros(T) for k in ('z', 'c', 'g', 'w', 'S')}
     sl, sg, spz = scenarios4_145(d, K)
-    ph = price_hat(d, 0); lam = LAM  # 与Q3统一，避免横向比较混入终端价值变化
-    x = stage0_lp4_145(committed_q, S0, sl, sg, spz, ph, lam, commit_end=first_adjust)
+    p_center = price_hat(d, 0); lam = LAM  # 与Q3统一，避免横向比较混入终端价值变化
+    x = stage0_lp4_145(committed_q, S0, sl, sg, spz, p_center, lam,
+                       commit_end=first_adjust)
     q = x.copy(); S = S0
     ml, mg = midnight_actual4(d)
     S, midnight = dispatch_locked_interval(committed_q, S, ml, mg)
@@ -359,8 +375,8 @@ def solve_day4(d, S0, committed_q, K=30, stages=(0, 1, 2, 3)):
             later = [j for j in enabled if j > m]
             commit_end = TSTAGE[later[0]] if later else T
             sl, sg, spz = scenarios4(d, m, K)
-            ph = price_hat(d, m); lam = LAM
-            q[tm:commit_end] = stage_lp4(m, x, S, sl, sg, spz, ph, adjust=True,
+            p_center = price_hat(d, m); lam = LAM
+            q[tm:commit_end] = stage_lp4(m, x, S, sl, sg, spz, p_center, adjust=True,
                                          lam=lam, commit_end=commit_end)
         S = dispatch(tm, min(tn, T-1), q, S, L[d], G[d], out)
     natural = {k: np.r_[midnight[k], out[k][:T-1]] for k in ('c','g','z','w')}

@@ -78,6 +78,12 @@ DELIVERY_END = "2025-12-31"
 S0_DEFAULT = 6000.0
 ND = 365
 N_JAN = 31                  # 1 月预热天数 → 交付期起点在明细中的下标
+Q43_PRICE_OBJECTIVE_POLICY = {
+    "shared_price_basis": "center_forecast",
+    "recourse_price_basis": "scenario_price",
+    "objective_type": "hybrid_center_and_scenario_recourse",
+    "scenario_price_centering": "not_recentered",
+}
 
 TOL_YUAN = 1e-6
 TOL_KWH = 1e-6
@@ -197,6 +203,15 @@ def verify_variant(variant: str, m: np.ndarray, K: int) -> dict:
     detail = np.load(OUT / f"detail_q4-{variant}_K{K}.npz")
     payload = json.loads((OUT / f"payload_q4-{variant}_K{K}.json").read_text(encoding="utf-8"))
     summary = json.loads((OUT / f"summary_q4-{variant}_K{K}.json").read_text(encoding="utf-8"))
+    if variant == "3":
+        payload_policy = {k: payload["meta"].get(k) for k in Q43_PRICE_OBJECTIVE_POLICY}
+        summary_policy = {k: summary["meta"].get(k) for k in Q43_PRICE_OBJECTIVE_POLICY}
+        if payload_policy != Q43_PRICE_OBJECTIVE_POLICY:
+            raise ValueError(f"3: payload 价格目标元数据不一致：{payload_policy!r}")
+        if summary_policy != Q43_PRICE_OBJECTIVE_POLICY:
+            raise ValueError(f"3: summary 价格目标元数据不一致：{summary_policy!r}")
+        if payload_policy != summary_policy:
+            raise ValueError("3: payload 与 summary 的价格目标元数据不一致")
     dates = [str(x) for x in detail["dates"]]
     x, q = detail["x"], detail["q"]
     nx, nq = detail["natural_x"], detail["natural_q"]

@@ -5,10 +5,10 @@
       "variant": "2",
       "total_cost_yuan": 15201795.404209783,
       "plan_cost_yuan": 13491653.161344932,
-      "adjust_cost_yuan": 0,
+      "adjust_cost_yuan": 0.0,
       "emergency_cost_yuan": 1710142.2428648607,
       "worst_day": "2025-02-01",
-      "worst_day_gap": 0,
+      "worst_day_gap": 0.0,
       "realtime_replay_done": false
     },
     "3": {
@@ -18,69 +18,69 @@
       "adjust_cost_yuan": 916112.5763941391,
       "emergency_cost_yuan": 226155.54964240897,
       "worst_day": "2025-02-01",
-      "worst_day_gap": 0,
+      "worst_day_gap": 0.0,
       "realtime_replay_done": true
     }
   },
   "worst": {
-    "[2] 明细电价 = 附件4 实际电价/kWh": 0,
-    "[2] 自然日电价右移一位自洽": 0,
-    "[2] natural_x 右移自洽/kWh": 0,
-    "[2] natural_q 右移自洽/kWh": 0,
-    "[2] q ≡ x（只在0:00决策）/kWh": 0,
-    "[2] 逐日总费用 vs payload": 0,
-    "[2] 交付期计划购电费 vs summary": 0,
-    "[2] 交付期调整相关费用 vs summary": 0,
-    "[2] 交付期紧急购电费 vs summary": 0,
-    "[2] 交付期总费用 vs summary": 0,
-    "[2] 交付期 emergency_kwh vs summary": 1.7462298274040222e-10,
+    "[2] 明细电价 = 附件4 实际电价/kWh": 0.0,
+    "[2] 自然日电价右移一位自洽": 0.0,
+    "[2] natural_x 右移自洽/kWh": 0.0,
+    "[2] natural_q 右移自洽/kWh": 0.0,
+    "[2] q ≡ x（只在0:00决策）/kWh": 0.0,
+    "[2] 逐日总费用 vs payload": 0.0,
+    "[2] 交付期计划购电费 vs summary": 0.0,
+    "[2] 交付期调整相关费用 vs summary": 0.0,
+    "[2] 交付期紧急购电费 vs summary": 0.0,
+    "[2] 交付期总费用 vs summary": 0.0,
+    "[2] 交付期 emergency_kwh vs summary": 1.1641532182693481e-10,
     "[2] 交付期 charge_kwh vs summary": 9.313225746154785e-10,
-    "[2] 交付期 discharge_kwh vs summary": 9.313225746154785e-10,
-    "[2] 交付期 curtail_kwh vs summary": 2.3283064365386963e-10,
-    "[2] 交付期 adjust_up_kwh vs summary": 0,
-    "[2] 交付期 adjust_down_kwh vs summary": 0,
-    "[2] SOC 递推残差/kWh": 0,
-    "[2] 充电量超上限/kWh": 0,
-    "[2] 放电量超上限/kWh": 0,
-    "[2] SOC 低于下限/kWh": 0,
-    "[2] SOC 高于上限/kWh": 0,
-    "[2] 负数电量/kWh": 0,
-    "[2] 同时充放电/kWh": 0,
-    "[2] 首日初始 SOC 偏离 6000/kWh": 0,
-    "[2] 跨日 SOC 不连续/kWh": 0,
-    "[2] SOC 轨迹首列 ≠ S0/kWh": 0,
+    "[2] 交付期 discharge_kwh vs summary": 0.0,
+    "[2] 交付期 curtail_kwh vs summary": 0.0,
+    "[2] 交付期 adjust_up_kwh vs summary": 0.0,
+    "[2] 交付期 adjust_down_kwh vs summary": 0.0,
+    "[2] SOC 递推残差/kWh": 0.0,
+    "[2] 充电量超上限/kWh": 0.0,
+    "[2] 放电量超上限/kWh": 0.0,
+    "[2] SOC 低于下限/kWh": 0.0,
+    "[2] SOC 高于上限/kWh": 0.0,
+    "[2] 负数电量/kWh": 0.0,
+    "[2] 同时充放电/kWh": 0.0,
+    "[2] 首日初始 SOC 偏离 6000/kWh": 0.0,
+    "[2] 跨日 SOC 不连续/kWh": 0.0,
+    "[2] SOC 轨迹首列 ≠ S0/kWh": 0.0,
     "[2] 能量平衡恒等式/kWh": 2.2737367544323206e-13,
-    "[3] 明细电价 = 附件4 实际电价/kWh": 0,
-    "[3] 自然日电价右移一位自洽": 0,
-    "[3] natural_x 右移自洽/kWh": 0,
-    "[3] natural_q 右移自洽/kWh": 0,
-    "[3] 逐日总费用 vs payload": 0,
-    "[3] 交付期计划购电费 vs summary": 0,
-    "[3] 交付期调整相关费用 vs summary": 0,
-    "[3] 交付期紧急购电费 vs summary": 0,
-    "[3] 交付期总费用 vs summary": 0,
+    "[3] 明细电价 = 附件4 实际电价/kWh": 0.0,
+    "[3] 自然日电价右移一位自洽": 0.0,
+    "[3] natural_x 右移自洽/kWh": 0.0,
+    "[3] natural_q 右移自洽/kWh": 0.0,
+    "[3] 逐日总费用 vs payload": 0.0,
+    "[3] 交付期计划购电费 vs summary": 0.0,
+    "[3] 交付期调整相关费用 vs summary": 0.0,
+    "[3] 交付期紧急购电费 vs summary": 0.0,
+    "[3] 交付期总费用 vs summary": 0.0,
     "[3] 交付期 emergency_kwh vs summary": 7.275957614183426e-12,
-    "[3] 交付期 charge_kwh vs summary": 4.6566128730773926e-9,
+    "[3] 交付期 charge_kwh vs summary": 4.6566128730773926e-09,
     "[3] 交付期 discharge_kwh vs summary": 9.313225746154785e-10,
-    "[3] 交付期 curtail_kwh vs summary": 1.862645149230957e-9,
-    "[3] 交付期 adjust_up_kwh vs summary": 0,
-    "[3] 交付期 adjust_down_kwh vs summary": 1.7462298274040222e-10,
-    "[3] SOC 递推残差/kWh": 0,
-    "[3] 充电量超上限/kWh": 0,
-    "[3] 放电量超上限/kWh": 0,
-    "[3] SOC 低于下限/kWh": 0,
-    "[3] SOC 高于上限/kWh": 0,
+    "[3] 交付期 curtail_kwh vs summary": 1.6298145055770874e-09,
+    "[3] 交付期 adjust_up_kwh vs summary": 1.1641532182693481e-10,
+    "[3] 交付期 adjust_down_kwh vs summary": 2.3283064365386963e-10,
+    "[3] SOC 递推残差/kWh": 0.0,
+    "[3] 充电量超上限/kWh": 0.0,
+    "[3] 放电量超上限/kWh": 0.0,
+    "[3] SOC 低于下限/kWh": 0.0,
+    "[3] SOC 高于上限/kWh": 0.0,
     "[3] 负数电量/kWh": 2.1032064978498966e-12,
-    "[3] 同时充放电/kWh": 0,
-    "[3] 首日初始 SOC 偏离 6000/kWh": 0,
-    "[3] 跨日 SOC 不连续/kWh": 0,
-    "[3] SOC 轨迹首列 ≠ S0/kWh": 0,
-    "[3] 能量平衡恒等式/kWh": 0,
-    "[3] 重放充电量 vs 明细/kWh": 0,
-    "[3] 重放放电量 vs 明细/kWh": 0,
-    "[3] 重放紧急购电 vs 明细/kWh": 0,
-    "[3] 重放弃电 vs 明细/kWh": 0,
-    "[3] 重放 SOC 轨迹 vs 明细/kWh": 0
+    "[3] 同时充放电/kWh": 0.0,
+    "[3] 首日初始 SOC 偏离 6000/kWh": 0.0,
+    "[3] 跨日 SOC 不连续/kWh": 0.0,
+    "[3] SOC 轨迹首列 ≠ S0/kWh": 0.0,
+    "[3] 能量平衡恒等式/kWh": 0.0,
+    "[3] 重放充电量 vs 明细/kWh": 0.0,
+    "[3] 重放放电量 vs 明细/kWh": 0.0,
+    "[3] 重放紧急购电 vs 明细/kWh": 0.0,
+    "[3] 重放弃电 vs 明细/kWh": 0.0,
+    "[3] 重放 SOC 轨迹 vs 明细/kWh": 0.0
   },
   "failures": [],
   "sources": {
@@ -89,16 +89,16 @@
     "data\\data\\附件4.xlsx": "20e9c93aeab5e8e21ae4dd15587f9e190f7408692504c1319598461cd654fe71",
     "q4\\q4\\detail_q4-2_K30.npz": "c18bbb896f2d37a7ce3b1bd540a5c8d5faed1c71de59f90b6ba8e95417dd32f4",
     "q4\\q4\\payload_q4-2_K30.json": "f5fb272e5dae3b35290cf5b2833477f70214ff7547b4d203f6021a676e578fce",
-    "q4\\q4\\summary_q4-2_K30.json": "c26723f1f4a1f53fb9ca9341c47e524dd8b488d4c1f5ae8b2a44ffdab5e88e11",
+    "q4\\q4\\summary_q4-2_K30.json": "8fa37c18d42fd2b578906dd0b48441020170481663e7e1743627874ff99d1e33",
     "q4\\q4\\detail_q4-3_K30.npz": "b16ece3ef76e758e28cf0f08102ea242ed139cf12e451cccce788bbb23847530",
-    "q4\\q4\\payload_q4-3_K30.json": "de3d11a01388beca5c5108fab7b571c5d7eaa92e7d547a93e96e16490ba93481",
-    "q4\\q4\\summary_q4-3_K30.json": "8407567341e7f6776a77366e496a30e089ec95bfd1e4a95752d5dfce6db7c1ca",
-    "src\\src\\q4_solver.py": "26db080d8a8774d1c6dfc21aaf65e546c162b2498aacc76fd6440b3966f70e04",
-    "src\\src\\q4_q2_solver.py": "00e5733e8995b50758580cb85888e684f1bd9fbb29c3b243ccb7c3ff4783a87c",
+    "q4\\q4\\payload_q4-3_K30.json": "443e865065a53d9b2e13ad3298a0caa4f8268f065dca0f9d493377a237abcf9b",
+    "q4\\q4\\summary_q4-3_K30.json": "d64ef0d8dbf1c19e2473b4407793610ea35b05c7b863a3a3c0aba64e76ef5379",
+    "src\\src\\q4_solver.py": "4daccb3c9d0e799f87938df21402db0b41341f4baf962faaf3084ab322ec24ba",
+    "src\\src\\q4_q2_solver.py": "71d86c2d9c151d185206b889ed6c8b56a4bfab6e5bba9008010b97c92ffd2238",
     "src\\src\\q3_multistage.py": "9c6c7a0a780643954082109e92e7747e32d7cf36098975bffab7bd5a39287b7d",
     "src\\src\\q2_solver.py": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8",
-    "论文修订\\论文修订\\核对同步结果.py": "c05c5a2a8b8be477e5e555c513ccedb37b6fe4ccd3f761aee030140fc09f56cd",
-    "scripts\\scripts\\verify_q4.py": "42f36e7c4481f913daab3901dc40d3070f18c0946cd05c559c981867d753484e",
+    "论文修订\\论文修订\\核对同步结果.py": "f16696efa034911a59860d05cb785bbfa406c8a418f0ee83c4203b42b5a7ebb4",
+    "scripts\\scripts\\verify_q4.py": "1a96f58c6913ace1a797f51f43c490fecddd994581d0f76b6b6606368059b005",
     "data\\data\\附件5\\result4-2.xlsx": "ed175984d25ef3943040e6174a686313d99ea49f9e7b0b85c6e04dc4550e783a",
     "data\\data\\附件5\\result4-3.xlsx": "47099563e158ff87bd0949a5bd8f7a3dc5e0815bf67cf630b7d9aca846d38e32"
   },
@@ -106,14 +106,14 @@
     "2": {
       "total_cost_yuan": 15201795.404209783,
       "plan_cost_yuan": 13491653.161344932,
-      "adjust_cost_yuan": 0,
+      "adjust_cost_yuan": 0.0,
       "emergency_cost_yuan": 1710142.2428648607,
       "emergency_kwh": 272134.5025026693,
       "charge_kwh": 6120512.342104421,
       "discharge_kwh": 4958170.940237102,
       "curtail_kwh": 1913672.724091385,
-      "adjust_up_kwh": 0,
-      "adjust_down_kwh": 0
+      "adjust_up_kwh": 0.0,
+      "adjust_down_kwh": 0.0
     },
     "3": {
       "total_cost_yuan": 13876490.551360358,
@@ -132,19 +132,19 @@
     "2": {
       "计划购电量": {
         "data_rows": 334,
-        "max_numeric_gap": 0,
+        "max_numeric_gap": 0.0,
         "label_mismatches": 0,
         "excel_serial_dates_normalized": 0
       },
       "充放电量": {
         "data_rows": 2004,
-        "max_numeric_gap": 0,
+        "max_numeric_gap": 0.0,
         "label_mismatches": 0,
         "excel_serial_dates_normalized": 0
       },
       "紧急购电量": {
         "data_rows": 567,
-        "max_numeric_gap": 0,
+        "max_numeric_gap": 0.0,
         "label_mismatches": 0,
         "excel_serial_dates_normalized": 75
       }
@@ -181,12 +181,12 @@
       {
         "date": "2025-03-20",
         "total_cost_yuan": 42096.087739358234,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       },
       {
         "date": "2025-06-21",
         "total_cost_yuan": 22489.895644169068,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       },
       {
         "date": "2025-09-23",
@@ -196,19 +196,19 @@
       {
         "date": "2025-12-21",
         "total_cost_yuan": 72203.31333287465,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       }
     ],
     "3": [
       {
         "date": "2025-03-20",
         "total_cost_yuan": 42928.89527673157,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       },
       {
         "date": "2025-06-21",
         "total_cost_yuan": 17508.25744354382,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       },
       {
         "date": "2025-09-23",
@@ -218,9 +218,9 @@
       {
         "date": "2025-12-21",
         "total_cost_yuan": 71343.41811286108,
-        "emergency_total_kwh": 0
+        "emergency_total_kwh": 0.0
       }
     ]
   },
-  "log": "  [OK ] [2] 明细电价 = 附件4 实际电价/kWh                              最大偏差 0.000e+00\n  [OK ] [2] 自然日电价右移一位自洽                                      最大偏差 0.000e+00\n  [OK ] [2] natural_x 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [2] natural_q 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [2] q ≡ x（只在0:00决策）/kWh                              最大偏差 0.000e+00\n  [OK ] [2] 逐日总费用 vs payload                                 最大偏差 0.000e+00\n  [OK ] [2] 交付期计划购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [2] 交付期调整相关费用 vs summary                             最大偏差 0.000e+00\n  [OK ] [2] 交付期紧急购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [2] 交付期总费用 vs summary                                最大偏差 0.000e+00\n  [OK ] [2] 交付期 emergency_kwh vs summary                     最大偏差 1.746e-10\n  [OK ] [2] 交付期 charge_kwh vs summary                        最大偏差 9.313e-10\n  [OK ] [2] 交付期 discharge_kwh vs summary                     最大偏差 9.313e-10\n  [OK ] [2] 交付期 curtail_kwh vs summary                       最大偏差 2.328e-10\n  [OK ] [2] 交付期 adjust_up_kwh vs summary                     最大偏差 0.000e+00\n  [OK ] [2] 交付期 adjust_down_kwh vs summary                   最大偏差 0.000e+00\n  [OK ] [2] SOC 递推残差/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] 充电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [2] 放电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [2] SOC 低于下限/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] SOC 高于上限/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] 负数电量/kWh                                         最大偏差 -0.000e+00\n  [OK ] [2] 同时充放电/kWh                                        最大偏差 0.000e+00\n  [OK ] [2] 首日初始 SOC 偏离 6000/kWh                             最大偏差 0.000e+00\n  [OK ] [2] 跨日 SOC 不连续/kWh                                   最大偏差 0.000e+00\n  [OK ] [2] SOC 轨迹首列 ≠ S0/kWh                                最大偏差 0.000e+00\n  [OK ] [2] 能量平衡恒等式/kWh                                      最大偏差 2.274e-13\n  [--  ] [2] 实时层重放：跳过（SAA 参考充放电轨迹未落盘，见模块 docstring）\n  [OK ] [3] 明细电价 = 附件4 实际电价/kWh                              最大偏差 0.000e+00\n  [OK ] [3] 自然日电价右移一位自洽                                      最大偏差 0.000e+00\n  [OK ] [3] natural_x 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [3] natural_q 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [3] 逐日总费用 vs payload                                 最大偏差 0.000e+00\n  [OK ] [3] 交付期计划购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [3] 交付期调整相关费用 vs summary                             最大偏差 0.000e+00\n  [OK ] [3] 交付期紧急购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [3] 交付期总费用 vs summary                                最大偏差 0.000e+00\n  [OK ] [3] 交付期 emergency_kwh vs summary                     最大偏差 7.276e-12\n  [OK ] [3] 交付期 charge_kwh vs summary                        最大偏差 4.657e-09\n  [OK ] [3] 交付期 discharge_kwh vs summary                     最大偏差 9.313e-10\n  [OK ] [3] 交付期 curtail_kwh vs summary                       最大偏差 1.863e-09\n  [OK ] [3] 交付期 adjust_up_kwh vs summary                     最大偏差 0.000e+00\n  [OK ] [3] 交付期 adjust_down_kwh vs summary                   最大偏差 1.746e-10\n  [OK ] [3] SOC 递推残差/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] 充电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [3] 放电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [3] SOC 低于下限/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] SOC 高于上限/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] 负数电量/kWh                                         最大偏差 2.103e-12\n  [OK ] [3] 同时充放电/kWh                                        最大偏差 0.000e+00\n  [OK ] [3] 首日初始 SOC 偏离 6000/kWh                             最大偏差 0.000e+00\n  [OK ] [3] 跨日 SOC 不连续/kWh                                   最大偏差 0.000e+00\n  [OK ] [3] SOC 轨迹首列 ≠ S0/kWh                                最大偏差 0.000e+00\n  [OK ] [3] 能量平衡恒等式/kWh                                      最大偏差 0.000e+00\n  [OK ] [3] 重放充电量 vs 明细/kWh                                  最大偏差 0.000e+00\n  [OK ] [3] 重放放电量 vs 明细/kWh                                  最大偏差 0.000e+00\n  [OK ] [3] 重放紧急购电 vs 明细/kWh                                 最大偏差 0.000e+00\n  [OK ] [3] 重放弃电 vs 明细/kWh                                   最大偏差 0.000e+00\n  [OK ] [3] 重放 SOC 轨迹 vs 明细/kWh                              最大偏差 0.000e+00\n"
+  "log": "  [OK ] [2] 明细电价 = 附件4 实际电价/kWh                              最大偏差 0.000e+00\n  [OK ] [2] 自然日电价右移一位自洽                                      最大偏差 0.000e+00\n  [OK ] [2] natural_x 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [2] natural_q 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [2] q ≡ x（只在0:00决策）/kWh                              最大偏差 0.000e+00\n  [OK ] [2] 逐日总费用 vs payload                                 最大偏差 0.000e+00\n  [OK ] [2] 交付期计划购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [2] 交付期调整相关费用 vs summary                             最大偏差 0.000e+00\n  [OK ] [2] 交付期紧急购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [2] 交付期总费用 vs summary                                最大偏差 0.000e+00\n  [OK ] [2] 交付期 emergency_kwh vs summary                     最大偏差 1.164e-10\n  [OK ] [2] 交付期 charge_kwh vs summary                        最大偏差 9.313e-10\n  [OK ] [2] 交付期 discharge_kwh vs summary                     最大偏差 0.000e+00\n  [OK ] [2] 交付期 curtail_kwh vs summary                       最大偏差 0.000e+00\n  [OK ] [2] 交付期 adjust_up_kwh vs summary                     最大偏差 0.000e+00\n  [OK ] [2] 交付期 adjust_down_kwh vs summary                   最大偏差 0.000e+00\n  [OK ] [2] SOC 递推残差/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] 充电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [2] 放电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [2] SOC 低于下限/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] SOC 高于上限/kWh                                     最大偏差 0.000e+00\n  [OK ] [2] 负数电量/kWh                                         最大偏差 -0.000e+00\n  [OK ] [2] 同时充放电/kWh                                        最大偏差 0.000e+00\n  [OK ] [2] 首日初始 SOC 偏离 6000/kWh                             最大偏差 0.000e+00\n  [OK ] [2] 跨日 SOC 不连续/kWh                                   最大偏差 0.000e+00\n  [OK ] [2] SOC 轨迹首列 ≠ S0/kWh                                最大偏差 0.000e+00\n  [OK ] [2] 能量平衡恒等式/kWh                                      最大偏差 2.274e-13\n  [--  ] [2] 实时层重放：跳过（SAA 参考充放电轨迹未落盘，见模块 docstring）\n  [OK ] [3] 明细电价 = 附件4 实际电价/kWh                              最大偏差 0.000e+00\n  [OK ] [3] 自然日电价右移一位自洽                                      最大偏差 0.000e+00\n  [OK ] [3] natural_x 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [3] natural_q 右移自洽/kWh                               最大偏差 0.000e+00\n  [OK ] [3] 逐日总费用 vs payload                                 最大偏差 0.000e+00\n  [OK ] [3] 交付期计划购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [3] 交付期调整相关费用 vs summary                             最大偏差 0.000e+00\n  [OK ] [3] 交付期紧急购电费 vs summary                              最大偏差 0.000e+00\n  [OK ] [3] 交付期总费用 vs summary                                最大偏差 0.000e+00\n  [OK ] [3] 交付期 emergency_kwh vs summary                     最大偏差 7.276e-12\n  [OK ] [3] 交付期 charge_kwh vs summary                        最大偏差 4.657e-09\n  [OK ] [3] 交付期 discharge_kwh vs summary                     最大偏差 9.313e-10\n  [OK ] [3] 交付期 curtail_kwh vs summary                       最大偏差 1.630e-09\n  [OK ] [3] 交付期 adjust_up_kwh vs summary                     最大偏差 1.164e-10\n  [OK ] [3] 交付期 adjust_down_kwh vs summary                   最大偏差 2.328e-10\n  [OK ] [3] SOC 递推残差/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] 充电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [3] 放电量超上限/kWh                                       最大偏差 0.000e+00\n  [OK ] [3] SOC 低于下限/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] SOC 高于上限/kWh                                     最大偏差 0.000e+00\n  [OK ] [3] 负数电量/kWh                                         最大偏差 2.103e-12\n  [OK ] [3] 同时充放电/kWh                                        最大偏差 0.000e+00\n  [OK ] [3] 首日初始 SOC 偏离 6000/kWh                             最大偏差 0.000e+00\n  [OK ] [3] 跨日 SOC 不连续/kWh                                   最大偏差 0.000e+00\n  [OK ] [3] SOC 轨迹首列 ≠ S0/kWh                                最大偏差 0.000e+00\n  [OK ] [3] 能量平衡恒等式/kWh                                      最大偏差 0.000e+00\n  [OK ] [3] 重放充电量 vs 明细/kWh                                  最大偏差 0.000e+00\n  [OK ] [3] 重放放电量 vs 明细/kWh                                  最大偏差 0.000e+00\n  [OK ] [3] 重放紧急购电 vs 明细/kWh                                 最大偏差 0.000e+00\n  [OK ] [3] 重放弃电 vs 明细/kWh                                   最大偏差 0.000e+00\n  [OK ] [3] 重放 SOC 轨迹 vs 明细/kWh                              最大偏差 0.000e+00\n"
 }
