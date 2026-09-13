@@ -100,6 +100,9 @@ def backtest(data_dir: Path, cfg=None, d0: int = 0, d1: int | None = None):
         run=B.causal_dispatch(net[day],natural_grid,sol["reference_charge"][:144],sol["reference_discharge"][:144],soc,cfg)
         records[day]=dict(x=published,q=published.copy(),natural_x=natural_grid,natural_q=natural_grid.copy(),
                           natural=dict(c=run["charge"],g=run["discharge"],z=run["emergency"],w=run["surplus"],S=run["soc"]),
-                          S0=soc,S24=float(run["soc"][-1]),price_forecast_145=ph,weight=weight,window=window)
+                          S0=soc,S24=float(run["soc"][-1]),price_forecast_145=ph,weight=weight,window=window,
+                          scenario_count=len(scenarios),
+                          reference_charge=sol["reference_charge"].copy(),
+                          reference_discharge=sol["reference_discharge"].copy())
         soc=float(run["soc"][-1]); committed=float(published[-1])
     return records,data

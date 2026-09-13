@@ -1,0 +1,56 @@
+{
+  "status": "PASS",
+  "created_at": "2026-09-13T13:07:09.846221+08:00",
+  "elapsed_seconds": 353.26612809998915,
+  "scope": "2025-01-01 through 2025-12-31 continuous run; delivery period begins 2025-02-01",
+  "days": 365,
+  "tolerance_kwh": 1e-07,
+  "trajectory_file": "q4\\q4\\q4-2_reference_trajectory_K30.npz",
+  "trajectory_sha256": "411c93704e9a0551f813f95b4cfbdbd8c1f4ef5ccc3c1529617588ee4fd98dc8",
+  "reference_shapes": {
+    "charge": [
+      365,
+      145
+    ],
+    "discharge": [
+      365,
+      145
+    ]
+  },
+  "rerun_vs_delivered_max_abs_gap": {
+    "x": 0.0,
+    "natural_x": 0.0,
+    "c": 0.0,
+    "g": 0.0,
+    "z": 0.0,
+    "w": 0.0,
+    "S": 0.0,
+    "S0": 0.0
+  },
+  "independent_replay_vs_rerun_max_abs_gap_kwh": {
+    "c": 0.0,
+    "g": 0.0,
+    "z": 0.0,
+    "w": 0.0,
+    "S": 0.0
+  },
+  "scenario_count_range": [
+    1,
+    14
+  ],
+  "source_hashes": {
+    "data\\data\\附件1.xlsx": "66b87134f5ecccd68184d3539bb1293ef039f9e0fdd955a589b9bfa7f227c377",
+    "data\\data\\附件2.xlsx": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72",
+    "data\\data\\附件4.xlsx": "20e9c93aeab5e8e21ae4dd15587f9e190f7408692504c1319598461cd654fe71",
+    "src\\src\\q2_solver.py": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8",
+    "src\\src\\q4_q2_solver.py": "e90cd0372354c2d5c99f608ab71787153a341c570cc12a6ac23662e921ebe448",
+    "q4\\q4\\detail_q4-2_K30.npz": "c18bbb896f2d37a7ce3b1bd540a5c8d5faed1c71de59f90b6ba8e95417dd32f4"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.5.3",
+    "scipy": "1.18.1",
+    "solver": "scipy.optimize.linprog method=highs"
+  },
+  "claim_boundary": "This verifies exact reproduction of the delivered 4-2 execution arrays and an independent replay of the causal dispatch using newly saved SAA mean reference trajectories. It does not prove uniqueness or global optimality beyond the implemented LP."
+}
