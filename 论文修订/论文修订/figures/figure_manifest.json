@@ -1,0 +1,224 @@
+{
+  "generator": {
+    "script": "scripts/scripts/render_paper_figures.py",
+    "version": "2.0.0",
+    "generated_at": "2026-09-13T09:45:50",
+    "python": "3.13.12",
+    "matplotlib": "3.11.1",
+    "numpy": "2.4.1",
+    "png_dpi": 500,
+    "design_width_mm": 160.0
+  },
+  "conventions": {
+    "time_labels": "区间起点",
+    "natural_day_intervals": 144,
+    "template_row_items": 144,
+    "stage0_planning_window_segments": 145,
+    "cost_period": "2025-02-01 至 2025-12-31，334 天 / 48096 时段",
+    "q34_model_class": "滚动两阶段 / SAA 近似（非严格多阶段随机最优）",
+    "visual": {
+      "background": "white",
+      "main_color": "科研蓝",
+      "accent_color": "橙色（唯一重点强调色）",
+      "secondary": "灰 / 灰蓝",
+      "spines": "仅保留左、下边框",
+      "grid": "浅灰弱网格，仅纵轴（分类轴为横轴时用横网格）",
+      "dual_axis": "不使用"
+    },
+    "palette": {
+      "科研蓝（主色）": "#2F5C8A",
+      "深蓝（第二层次）": "#1E3E60",
+      "灰蓝（次要/背景）": "#A9BCCF",
+      "浅灰蓝（浅填充）": "#DFE7EF",
+      "灰（对照基准）": "#8C8C8C",
+      "浅灰（网格/弱包络）": "#DCDCDC",
+      "橙（唯一强调）": "#D9822B",
+      "浅橙（强调底纹）": "#F2DCC2",
+      "文字与坐标轴": "#1A1A1A"
+    }
+  },
+  "figures": [
+    {
+      "id": "fig_5_1_time_mapping_and_information_boundary",
+      "title_cn": "图5-1　原始模板行到自然日 144 段的跨行映射与四阶段决策信息边界",
+      "pdf": "论文修订\\论文修订\\figures\\fig_5_1_time_mapping_and_information_boundary.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_5_1_time_mapping_and_information_boundary.png",
+      "width_mm": 159.97,
+      "height_mm": 139.95,
+      "png_px": [
+        3149,
+        2755
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "论文修订\\论文修订\\简洁_问题一二三四修订.md",
+          "sha256": "45f29eedaffa072266ab294704522c5a67cf1670da895f411c97e110e8504ce3"
+        },
+        {
+          "path": "src\\src\\q1_solver.py",
+          "sha256": "b10f690b0eb49ed9fa9c2c862972bae1d1a03291893f2e1f0d5828470aeed142"
+        },
+        {
+          "path": "src\\src\\q2_solver.py",
+          "sha256": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_1_q1_dispatch_mechanism",
+      "title_cn": "图6-1　问题一代表日储能调度与外购费用转移机制",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_1_q1_dispatch_mechanism.png",
+      "width_mm": 159.97,
+      "height_mm": 247.95,
+      "png_px": [
+        3149,
+        4881
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "data\\data\\附件1.xlsx",
+          "sha256": "66b87134f5ecccd68184d3539bb1293ef039f9e0fdd955a589b9bfa7f227c377"
+        },
+        {
+          "path": "src\\src\\q1_solver.py",
+          "sha256": "b10f690b0eb49ed9fa9c2c862972bae1d1a03291893f2e1f0d5828470aeed142"
+        },
+        {
+          "path": "src\\src\\efficiency.py",
+          "sha256": "2581d05e5a87bbb6e44ea78b5abcdc22219abdb33cc5f3b2da488922e71532a4"
+        },
+        {
+          "path": "data\\data\\附件5\\result1.xlsx",
+          "sha256": "1dab5179d81e0e916c838d8b316bf2b89c71b5efd7232ff802eba3d99a023c0a"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_2_q2_uncertainty_and_shortage_risk",
+      "title_cn": "图6-2　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.png",
+      "width_mm": 159.97,
+      "height_mm": 207.98,
+      "png_px": [
+        3149,
+        4094
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q2_paper_audit\\q2-paper-audit\\interval_detail.csv",
+          "sha256": "f28c6da31d742b39bbfa90d163b22c00887d7eb3c0a89b7c51f189927df123e3"
+        },
+        {
+          "path": "q2_paper_audit\\q2-paper-audit\\daily_metrics.csv",
+          "sha256": "de2689f8b27a791976067ce23745876c3108457024d548569650bbce9c0e969f"
+        },
+        {
+          "path": "q2_paper_audit\\q2-paper-audit\\coverage.json",
+          "sha256": "55cc72f699dac5c6adb51c9bd6815a43132398d728f0e0dada45b51147387133"
+        },
+        {
+          "path": "src\\src\\q2_solver.py",
+          "sha256": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8"
+        },
+        {
+          "path": "data\\data\\附件2.xlsx",
+          "sha256": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_3_q3_stage_value",
+      "title_cn": "图6-3　问题三八种阶段组合的费用构成与各更新时刻的 Shapley 节省分摊",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_value.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_value.png",
+      "width_mm": 159.97,
+      "height_mm": 131.98,
+      "png_px": [
+        3149,
+        2598
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q3_paper_audit\\q3-paper-audit\\q3_stage_comparison.csv",
+          "sha256": "5dfde453596fabe0aabe367fb658d6d458a16fd6a42988dfc3ad222cb23cf225"
+        },
+        {
+          "path": "q3_paper_audit\\q3-paper-audit\\q3_stage_comparison.json",
+          "sha256": "ffe69e25969a547454f7f4bcf4c815aaacd1854ccce769538537e684c81c6ed1"
+        },
+        {
+          "path": "data\\data\\附件5\\result3.xlsx",
+          "sha256": "c04a0a1e500c0a3f921d3bba9ff67e5393062b503e1a880a811da42e6cfb1379"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_4_q4_aggregate_comparison",
+      "title_cn": "图6-4　问题四两种策略的费用构成与紧急购电量比较",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.png",
+      "width_mm": 159.97,
+      "height_mm": 115.98,
+      "png_px": [
+        3149,
+        2283
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q4\\q4\\summary_q4-2_K30.json",
+          "sha256": "c26723f1f4a1f53fb9ca9341c47e524dd8b488d4c1f5ae8b2a44ffdab5e88e11"
+        },
+        {
+          "path": "q4\\q4\\summary_q4-3_K30.json",
+          "sha256": "8407567341e7f6776a77366e496a30e089ec95bfd1e4a95752d5dfce6db7c1ca"
+        },
+        {
+          "path": "data\\data\\附件5\\result4-2.xlsx",
+          "sha256": "ed175984d25ef3943040e6174a686313d99ea49f9e7b0b85c6e04dc4550e783a"
+        },
+        {
+          "path": "data\\data\\附件5\\result4-3.xlsx",
+          "sha256": "47099563e158ff87bd0949a5bd8f7a3dc5e0815bf67cf630b7d9aca846d38e32"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_5_q4_daily_and_cumulative_savings",
+      "title_cn": "图6-5　问题四逐日费用节省与 334 天累计节省",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.png",
+      "width_mm": 159.97,
+      "height_mm": 149.96,
+      "png_px": [
+        3149,
+        2952
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q4\\q4\\payload_q4-2_K30.json",
+          "sha256": "f5fb272e5dae3b35290cf5b2833477f70214ff7547b4d203f6021a676e578fce"
+        },
+        {
+          "path": "q4\\q4\\payload_q4-3_K30.json",
+          "sha256": "de3d11a01388beca5c5108fab7b571c5d7eaa92e7d547a93e96e16490ba93481"
+        },
+        {
+          "path": "q4\\q4\\summary_q4-2_K30.json",
+          "sha256": "c26723f1f4a1f53fb9ca9341c47e524dd8b488d4c1f5ae8b2a44ffdab5e88e11"
+        },
+        {
+          "path": "q4\\q4\\summary_q4-3_K30.json",
+          "sha256": "8407567341e7f6776a77366e496a30e089ec95bfd1e4a95752d5dfce6db7c1ca"
+        }
+      ]
+    }
+  ]
+}
