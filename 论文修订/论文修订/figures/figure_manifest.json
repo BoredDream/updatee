@@ -2,7 +2,7 @@
   "generator": {
     "script": "scripts/scripts/render_paper_figures.py",
     "version": "3.0.0",
-    "generated_at": "2026-09-13T11:28:46",
+    "generated_at": "2026-09-13T12:29:28",
     "python": "3.13.12",
     "matplotlib": "3.11.1",
     "numpy": "2.4.1",
@@ -167,26 +167,54 @@
       ]
     },
     {
-      "id": "fig_6_2_q2_uncertainty_and_shortage_risk",
-      "title_cn": "图6-3　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+      "id": "fig_6_3_q2_daily_emergency_purchase",
+      "title_cn": "图6-3　评价期逐日紧急购电量",
       "generator_script": "scripts/scripts/render_paper_figures.py",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_2_q2_uncertainty_and_shortage_risk.png",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q2_daily_emergency_purchase.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_3_q2_daily_emergency_purchase.png",
       "width_mm": 159.97,
-      "height_mm": 177.95,
+      "height_mm": 95.96,
       "png_px": [
         3149,
-        3503
+        1889
+      ],
+      "dpi": 500,
+      "data_sources": [
+        {
+          "path": "q2_paper_audit\\q2-paper-audit\\daily_metrics.csv",
+          "sha256": "de2689f8b27a791976067ce23745876c3108457024d548569650bbce9c0e969f"
+        },
+        {
+          "path": "q2_paper_audit\\q2-paper-audit\\interval_detail.csv",
+          "sha256": "f28c6da31d742b39bbfa90d163b22c00887d7eb3c0a89b7c51f189927df123e3"
+        },
+        {
+          "path": "src\\src\\q2_solver.py",
+          "sha256": "362f10cb90c0b67aefca67fee327a5f51a552a63fbabe7cdefd20559a68c42b8"
+        },
+        {
+          "path": "data\\data\\附件2.xlsx",
+          "sha256": "2e95fd446bfafa0d8c59577b5c2e2ea8b3f1def20dde54a3062556f4da9b4c72"
+        }
+      ]
+    },
+    {
+      "id": "fig_6_4_q2_forecast_scenario_range",
+      "title_cn": "图6-4　指定日期净负荷预测与经验情景范围",
+      "generator_script": "scripts/scripts/render_paper_figures.py",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_4_q2_forecast_scenario_range.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_4_q2_forecast_scenario_range.png",
+      "width_mm": 159.97,
+      "height_mm": 141.99,
+      "png_px": [
+        3149,
+        2795
       ],
       "dpi": 500,
       "data_sources": [
         {
           "path": "q2_paper_audit\\q2-paper-audit\\interval_detail.csv",
           "sha256": "f28c6da31d742b39bbfa90d163b22c00887d7eb3c0a89b7c51f189927df123e3"
-        },
-        {
-          "path": "q2_paper_audit\\q2-paper-audit\\daily_metrics.csv",
-          "sha256": "de2689f8b27a791976067ce23745876c3108457024d548569650bbce9c0e969f"
         },
         {
           "path": "q2_paper_audit\\q2-paper-audit\\coverage.json",
@@ -203,11 +231,11 @@
       ]
     },
     {
-      "id": "fig_6_3_q3_stage_cost_composition",
-      "title_cn": "图6-4　问题三八种阶段组合的费用构成",
+      "id": "fig_6_5_q3_stage_cost_composition",
+      "title_cn": "图6-5　问题三八种阶段组合的费用构成",
       "generator_script": "scripts/scripts/render_paper_figures.py",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_cost_composition.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_stage_cost_composition.png",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_5_q3_stage_cost_composition.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_5_q3_stage_cost_composition.png",
       "width_mm": 159.97,
       "height_mm": 149.96,
       "png_px": [
@@ -231,11 +259,11 @@
       ]
     },
     {
-      "id": "fig_6_3_q3_shapley_allocation",
-      "title_cn": "图6-5　问题三三阶段 Shapley 收益分摊",
+      "id": "fig_6_6_q3_shapley_allocation",
+      "title_cn": "图6-6　问题三三阶段 Shapley 收益分摊",
       "generator_script": "scripts/scripts/render_paper_figures.py",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_3_q3_shapley_allocation.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_3_q3_shapley_allocation.png",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_6_q3_shapley_allocation.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_6_q3_shapley_allocation.png",
       "width_mm": 159.97,
       "height_mm": 87.99,
       "png_px": [
@@ -259,11 +287,11 @@
       ]
     },
     {
-      "id": "fig_6_4_q4_aggregate_comparison",
-      "title_cn": "图6-6　问题四两种策略的费用构成与紧急购电量比较",
+      "id": "fig_6_7_q4_aggregate_comparison",
+      "title_cn": "图6-7　问题四两种策略的费用构成与紧急购电量比较",
       "generator_script": "scripts/scripts/render_paper_figures.py",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_4_q4_aggregate_comparison.png",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_7_q4_aggregate_comparison.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_7_q4_aggregate_comparison.png",
       "width_mm": 159.97,
       "height_mm": 115.98,
       "png_px": [
@@ -291,11 +319,11 @@
       ]
     },
     {
-      "id": "fig_6_5_q4_daily_and_cumulative_savings",
-      "title_cn": "图6-7　问题四逐日费用节省与 334 天累计节省",
+      "id": "fig_6_8_q4_daily_and_cumulative_savings",
+      "title_cn": "图6-8　问题四逐日费用节省与 334 天累计节省",
       "generator_script": "scripts/scripts/render_paper_figures.py",
-      "pdf": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.pdf",
-      "png": "论文修订\\论文修订\\figures\\fig_6_5_q4_daily_and_cumulative_savings.png",
+      "pdf": "论文修订\\论文修订\\figures\\fig_6_8_q4_daily_and_cumulative_savings.pdf",
+      "png": "论文修订\\论文修订\\figures\\fig_6_8_q4_daily_and_cumulative_savings.png",
       "width_mm": 159.97,
       "height_mm": 149.96,
       "png_px": [

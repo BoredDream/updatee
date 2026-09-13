@@ -1,6 +1,6 @@
 # 论文图件图注与分析
 
-生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.0.0）　生成时间：2026-09-13T11:28:46
+生成脚本：`scripts/scripts/render_paper_figures.py`（版本 3.0.0）　生成时间：2026-09-13T12:29:28
 
 本文件同时收录由同级脚本生成的图件，各自的数据源与自检见各脚本：`scripts/scripts/render_pv_interpolation_figure.py`（`fig_5_2_pv_forecast_interpolation`）；`scripts/scripts/render_data_characteristics_figure.py`（`fig_5_3_annual_data_heatmap`）；`scripts/scripts/render_dispatch_overview_figure.py`（`fig_6_1_q1_price_and_storage_dispatch`）；`scripts/scripts/render_period_cost_figure.py`（`fig_6_2_q1_period_cost_difference`）。
 
@@ -101,27 +101,44 @@
 
 ---
 
-## 图6-3　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布
+## 图6-3　评价期逐日紧急购电量
 
-**文件**：`fig_6_2_q2_uncertainty_and_shortage_risk.pdf`、`fig_6_2_q2_uncertainty_and_shortage_risk.png`
+**文件**：`fig_6_3_q2_daily_emergency_purchase.pdf`、`fig_6_3_q2_daily_emergency_purchase.png`
 
 **分析**
 
-1. 面板 a—d 给出四个指定日期的中心预测净负荷（蓝色虚线）、实际净负荷（深灰实线）、经验最小—最大包络（浅灰）与经验 10%—90% 分位带（灰蓝）。四日共 576 个自然日时段中，实际值落入经验包络 394 段（68.40%），落入 10%—90% 分位带 314 段（54.51%）；分日覆盖为 125/144、55/144、90/144、124/144 与 101/144、37/144、63/144、113/144。
-2. 面板 e 给出 334 天逐日紧急购电量，橙色柱为最需注意的两日。评价期内 170 天出现紧急购电，最大日 2025-06-01 为 15465.52 kWh；题目指定日 2025-09-23 为 4471.62 kWh，而 2025-03-20、2025-06-21 与 2025-12-21 分别仅为 9.80、0.00 与 12.90 kWh，说明总体占比不高仍可能伴随个别日期的集中缺口。
+1. 评价期 334 天中有 170 天出现紧急购电，全年紧急购电 26.7693 万kWh，折合日均 801.5 kWh；最高日 2025-06-01 达 15465.52 kWh，约为日均的 19.3 倍，灰色虚线给出全年日均水平。
+2. 题目指定日 2025-09-23 为 4471.62 kWh，在全年由高到低排第 18 位；而 2025-03-20、2025-06-21 与 2025-12-21 分别仅为 9.80、0.00 与 12.90 kWh，说明紧急购电总体占比不高，仍可能伴随个别日期的集中缺口。
 3. 中心预测平均绝对误差与日紧急购电量的 Pearson 相关为 0.316、Spearman 相关为 0.074，只能说明二者存在有限的统计关联。
 
-**数据期间与单位**：评价期 2025-02-01 至 2025-12-31，共 334 天；面板 a—d 为四个指定日期的 144 段。净负荷与紧急购电量为 kWh（每 10 分钟）与 kWh（每日）。
+**数据期间与单位**：评价期 2025-02-01 至 2025-12-31，共 334 天；纵轴为每日紧急购电量（kWh）。
 
-**数据源**：q2_paper_audit 的 interval_detail.csv、daily_metrics.csv、coverage.json；情景带由 src/src/q2_solver.py 的当前情景构造函数重建（未使用正态区间替代），重建后覆盖计数与 coverage.json 完全一致（576 / 394 / 314），且四日的预测与实际序列与 interval_detail.csv 逐段一致。
+**数据源**：q2_paper_audit 的 daily_metrics.csv、interval_detail.csv；逐日紧急购电量由 src/src/q2_solver.py 当前实现重算，与 daily_metrics.csv 的当日合计逐日一致，全年合计 267693.199361 kWh、最大日与 2025-09-23 数值均通过核对。
 
-**结论适用边界**：包络与分位带为历史残差情景的经验范围，不是统计置信区间，也不代表全年覆盖率或全天无紧急购电概率；MAE 与紧急购电量的相关系数仅为描述性统计，不构成因果识别——紧急购电还受计划量、储电量状态与逐时段误差方向影响。
+**结论适用边界**：紧急购电量为按当日 144 段自然日口径聚合的补购电量，不含计划购电与合同调整；逐日柱高受当日净负荷水平、预测误差方向与储电量状态共同影响，MAE 与紧急购电量的相关系数仅为描述性统计，不构成因果识别。
 
 ---
 
-## 图6-4　问题三八种阶段组合的费用构成
+## 图6-4　指定日期净负荷预测与经验情景范围
 
-**文件**：`fig_6_3_q3_stage_cost_composition.pdf`、`fig_6_3_q3_stage_cost_composition.png`
+**文件**：`fig_6_4_q2_forecast_scenario_range.pdf`、`fig_6_4_q2_forecast_scenario_range.png`
+
+**分析**
+
+1. 四个指定日期（按面板顺序为 2025-03-20、2025-06-21、2025-09-23、2025-12-21）的中心预测净负荷（蓝色虚线）、实际净负荷（深灰实线）、经验最小—最大包络（浅灰）与经验 10%—90% 分位带（灰蓝）。四日共 576 个自然日时段中，实际值落入经验包络 394 段（68.40%），落入 10%—90% 分位带 314 段（54.51%）；分日包络覆盖依次为 125/144、55/144、90/144、124/144，分日 10%—90% 分位带覆盖依次为 101/144、37/144、63/144、113/144。
+2. 橙色圆点与浅橙底色标出该时段实际发生了紧急购电：分位带越窄或实际净负荷越靠近包络上缘，可用的调节余量越少，越容易触发紧急购电。
+
+**数据期间与单位**：四个指定日期各 144 段自然日时段，时间标签为区间起点；纵轴为净负荷电量（kWh，每 10 分钟）。
+
+**数据源**：q2_paper_audit 的 interval_detail.csv、coverage.json；情景带由 src/src/q2_solver.py 的当前情景构造函数重建（未使用正态区间替代），重建后覆盖计数与 coverage.json 完全一致（576 / 394 / 314），且四日的预测与实际序列与 interval_detail.csv 逐段一致。
+
+**结论适用边界**：包络与分位带为历史残差情景的经验范围，不是统计置信区间，也不代表全年覆盖率或全天无紧急购电概率。
+
+---
+
+## 图6-5　问题三八种阶段组合的费用构成
+
+**文件**：`fig_6_5_q3_stage_cost_composition.pdf`、`fig_6_5_q3_stage_cost_composition.png`
 
 **分析**
 
@@ -137,9 +154,9 @@
 
 ---
 
-## 图6-5　问题三三阶段 Shapley 收益分摊
+## 图6-6　问题三三阶段 Shapley 收益分摊
 
-**文件**：`fig_6_3_q3_shapley_allocation.pdf`、`fig_6_3_q3_shapley_allocation.png`
+**文件**：`fig_6_6_q3_shapley_allocation.pdf`、`fig_6_6_q3_shapley_allocation.png`
 
 **分析**
 
@@ -155,9 +172,9 @@
 
 ---
 
-## 图6-6　问题四两种策略的费用构成与紧急购电量比较
+## 图6-7　问题四两种策略的费用构成与紧急购电量比较
 
-**文件**：`fig_6_4_q4_aggregate_comparison.pdf`、`fig_6_4_q4_aggregate_comparison.png`
+**文件**：`fig_6_7_q4_aggregate_comparison.pdf`、`fig_6_7_q4_aggregate_comparison.png`
 
 **分析**
 
@@ -173,9 +190,9 @@
 
 ---
 
-## 图6-7　问题四逐日费用节省与 334 天累计节省
+## 图6-8　问题四逐日费用节省与 334 天累计节省
 
-**文件**：`fig_6_5_q4_daily_and_cumulative_savings.pdf`、`fig_6_5_q4_daily_and_cumulative_savings.png`
+**文件**：`fig_6_8_q4_daily_and_cumulative_savings.pdf`、`fig_6_8_q4_daily_and_cumulative_savings.png`
 
 **分析**
 

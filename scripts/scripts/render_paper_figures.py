@@ -1,4 +1,4 @@
-"""渲染数学建模竞赛论文图件（图5-1、图6-1 ~ 图6-5）。
+"""渲染数学建模竞赛论文图件（图5-1、图6-1 ~ 图6-8）。
 
 统一视觉规范
 ------------
@@ -370,8 +370,19 @@ def fig_5_1() -> None:
     save(fig, "fig_5_1_time_mapping_and_information_boundary")
 
 
-# ========================================================= 图6-2 不确定性缺口风险
-def fig_6_2(q2: dict) -> None:
+_Q2_STATS: dict | None = None
+
+
+def _q2_stats(q2: dict) -> dict:
+    """两张问题二图件共用的取值与核对。缓存一次：两张图各调一次，
+    不缓存会把同一组 check 记两遍，核对汇总里出现重复行。"""
+    global _Q2_STATS
+    if _Q2_STATS is None:
+        _Q2_STATS = _build_q2_stats(q2)
+    return _Q2_STATS
+
+
+def _build_q2_stats(q2: dict) -> dict:
     check("问题二情景包络覆盖段数", q2["env_hits"], 394.0, 1e-9)
     check("问题二分位带覆盖段数", q2["band_hits"], 314.0, 1e-9)
     check("问题二指定日期时段总数", q2["total"], 576.0, 1e-9)
@@ -391,10 +402,84 @@ def fig_6_2(q2: dict) -> None:
     check("问题二MAE与紧急购电Pearson相关", r_p, 0.315540, 1e-4)
     check("问题二MAE与紧急购电Spearman相关", r_s, 0.074394, 1e-4)
 
-    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 178 * MM), layout="constrained")
-    gs = fig.add_gridspec(3, 2, height_ratios=[1.0, 1.0, 0.72], hspace=0.06)
+    for day in q2["days"]:
+        check(f"{day['date']}中心预测与审计一致",
+              float(np.max(np.abs(day["center"] - day["audit_forecast"]))), 0.0, 1e-8, " kWh")
+        check(f"{day['date']}实际净负荷与审计一致",
+              float(np.max(np.abs(day["actual"] - day["audit_actual"]))), 0.0, 1e-8, " kWh")
 
-    for k, day in enumerate(q2["days"]):
+    return {"days": q2["days"], "em": em, "dates": daily_dates, "imax": imax,
+            "idx0923": idx0923, "r_p": r_p, "r_s": r_s,
+            "n_emg": int(np.count_nonzero(em > 1e-9))}
+
+
+# ======================================== 图6-3 评价期逐日紧急购电量（独立成图）
+def fig_6_3_q2_daily_emergency(q2: dict) -> None:
+    st = _q2_stats(q2)
+    em, dates = st["em"], st["dates"]
+    imax, idx0923 = st["imax"], st["idx0923"]
+
+    fig, ax = plt.subplots(figsize=(FULL_WIDTH_MM * MM, 96 * MM),
+                           layout="constrained")
+
+    xd = np.arange(len(em))
+    hi = (xd == imax) | (xd == idx0923)
+    # 334 根柱里只有两日需要被看见：橙色只给这两天，其余一律灰蓝。
+    # 单独成图后柱宽从 0.9 缩到 0.82，柱间留出缝隙，密集区不至于糊成一片。
+    ax.bar(xd, np.where(hi, em, np.nan), width=0.82, color=ORANGE, linewidth=0)
+    ax.bar(xd, np.where(hi, np.nan, em), width=0.82, color=GRAYBLUE, linewidth=0)
+
+    # 全年日均线：给 334 根柱一个量级参照，否则读者只能比高低、读不出水平。
+    mean_all = float(em.mean())
+    ax.axhline(mean_all, color=GRAY, linestyle=(0, (5, 2)), linewidth=0.9,
+               zorder=4)
+    ax.text(len(em) - 1, mean_all + 420, f"全年日均 {mean_all:,.0f} kWh ",
+            ha="right", va="bottom", fontsize=7.2, color=GRAY, zorder=6)
+
+    # 两条标注分列最高柱两侧：最大值向右、09-23 向左，x 区间不重叠，
+    # 即便两者高度接近也不会撞在一起。
+    ax.annotate(f"最大 {dates[imax]}：{em[imax]:,.2f} kWh",
+                xy=(imax, em[imax]), xytext=(imax + 22, em[imax] * 0.99),
+                fontsize=7.8, color=ORANGE, va="top",
+                arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
+    ax.annotate(f"{dates[idx0923]}：{em[idx0923]:,.2f} kWh",
+                xy=(idx0923, em[idx0923]), xytext=(idx0923 - 16, em[idx0923] + 5200),
+                fontsize=7.8, color=ORANGE, ha="right",
+                arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
+
+    ax.set_ylabel("每日紧急购电量 / kWh")
+    ax.set_xlabel("评价期日期（2025-02-01 至 2025-12-31，共 334 天）")
+    ticks = list(range(0, 334, 30))
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([dates[t][5:] for t in ticks])
+    ax.set_xlim(-1, 334)
+    ax.set_ylim(0, 20000)
+    style(ax)
+
+    note(ax, 0.005, 0.985,
+         f"评价期 334 天中有 {st['n_emg']} 天发生紧急购电，"
+         f"全年紧急购电 {em.sum() / 1e4:,.4f} 万kWh。\n"
+         f"中心预测 MAE 与日紧急购电量：Pearson r = {st['r_p']:.3f}、"
+         f"Spearman ρ = {st['r_s']:.3f}，仅为有限统计关联。",
+         ha="left", va="top", size=7.8).set_bbox(
+        dict(boxstyle="square,pad=0.28", facecolor="white", edgecolor="none",
+             alpha=0.88))
+
+    save(fig, "fig_6_3_q2_daily_emergency_purchase")
+
+
+# ================================= 图6-4 指定日期净负荷预测与经验情景范围（独立成图）
+def fig_6_4_q2_scenario_range(q2: dict) -> None:
+    st = _q2_stats(q2)
+
+    fig = plt.figure(figsize=(FULL_WIDTH_MM * MM, 142 * MM),
+                     layout="constrained")
+    gs = fig.add_gridspec(2, 2)
+    # 单独成图后不再与逐日柱状图争高度，四格放宽，行距与列距交给布局引擎，
+    # 只留一点缝，让相邻两格的水平网格线不至于连成一条而误读成同一坐标系。
+    fig.get_layout_engine().set(hspace=0.10, wspace=0.07)
+
+    for k, day in enumerate(st["days"]):
         ax = fig.add_subplot(gs[k // 2, k % 2])
         x = np.arange(144)
         ax.fill_between(x, day["env_min"], day["env_max"], color=GRAY_LT,
@@ -419,7 +504,8 @@ def fig_6_2(q2: dict) -> None:
         ax.set_title(f"{day['date']}　情景数 {day['scenario_count']}",
                      loc="left", pad=4, fontsize=9.2)
         ax.set_ylim(0, 1600)
-        time_ticks(ax, 36); style(ax)
+        time_ticks(ax, 36)
+        style(ax)
         if k % 2 == 0:
             ax.set_ylabel("净负荷电量 / kWh\n（每 10 分钟）")
         if k // 2 == 1:
@@ -438,47 +524,10 @@ def fig_6_2(q2: dict) -> None:
     fig.legend(handles=handles, loc="outside upper center", ncol=5,
                frameon=False, handlelength=1.6, columnspacing=1.1, fontsize=7.4)
 
-    # ---- e 334 天逐日紧急购电
-    ax = fig.add_subplot(gs[2, :])
-    xd = np.arange(len(em))
-    hi = (xd == imax) | (xd == idx0923)
-    ax.bar(xd, np.where(hi, em, np.nan), width=0.9, color=ORANGE, linewidth=0)
-    ax.bar(xd, np.where(hi, np.nan, em), width=0.9, color=GRAYBLUE, linewidth=0)
-    ax.set_ylabel("每日紧急购电量 / kWh")
-    ax.set_xlabel("评价期日期（2025-02-01 至 2025-12-31，共 334 天）")
-    ax.set_title("e　334 天逐日紧急购电量分布", loc="left", pad=4)
-    ticks = list(range(0, 334, 30))
-    ax.set_xticks(ticks)
-    ax.set_xticklabels([daily_dates[t][5:] for t in ticks])
-    ax.set_xlim(-1, 334); ax.set_ylim(0, 21000)
-    style(ax)
-    ax.annotate(f"最大 {daily_dates[imax]}：{em[imax]:,.2f} kWh",
-                xy=(imax, em[imax]), xytext=(imax + 24, em[imax] * 0.99),
-                fontsize=7.8, color=ORANGE, va="top",
-                arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
-    ax.annotate(f"2025-09-23：{em[idx0923]:,.2f} kWh",
-                xy=(idx0923, em[idx0923]), xytext=(idx0923 - 14, em[idx0923] + 5200),
-                fontsize=7.8, color=ORANGE, ha="right",
-                arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
-    note(ax, 0.005, 0.985,
-         f"评价期 334 天中有 {np.count_nonzero(em > 1e-9)} 天发生紧急购电，"
-         f"全年紧急购电 {em.sum() / 1e4:,.4f} 万kWh。\n"
-         f"中心预测 MAE 与日紧急购电量：Pearson r = {r_p:.3f}、"
-         f"Spearman ρ = {r_s:.3f}，仅为有限统计关联。",
-         ha="left", va="top", size=7.8).set_bbox(
-        dict(boxstyle="square,pad=0.28", facecolor="white", edgecolor="none",
-             alpha=0.88))
-
-    for day in q2["days"]:
-        check(f"{day['date']}中心预测与审计一致",
-              float(np.max(np.abs(day["center"] - day["audit_forecast"]))), 0.0, 1e-8, " kWh")
-        check(f"{day['date']}实际净负荷与审计一致",
-              float(np.max(np.abs(day["actual"] - day["audit_actual"]))), 0.0, 1e-8, " kWh")
-
-    save(fig, "fig_6_2_q2_uncertainty_and_shortage_risk")
+    save(fig, "fig_6_4_q2_forecast_scenario_range")
 
 
-# ========================================================== 图6-3 问题三阶段价值
+# ========================================================== 图6-5 问题三阶段价值
 _Q3_STATS: dict | None = None
 
 
@@ -514,8 +563,8 @@ def _build_q3_stage_stats(q3: dict) -> dict:
             "shap": shap, "marg": marg}
 
 
-# ============================ 图6-4 八种阶段组合的费用构成（独立成图）
-def fig_6_3(q3: dict) -> None:
+# ============================ 图6-5 八种阶段组合的费用构成（独立成图）
+def fig_6_5(q3: dict) -> None:
     st = _q3_stage_stats(q3)
     ordered = sorted(st["rows"], key=lambda r: r["total_cost_yuan"])
     labels = ["仅 0:00" if r["policy"] == "0-only" else r["policy"] for r in ordered]
@@ -600,11 +649,11 @@ def fig_6_3(q3: dict) -> None:
          f"计划费用 {plan.min():.2f}—{plan.max():.2f} 万元已从本面板略去",
          ha="right", va="top", size=7.0)
 
-    save(fig, "fig_6_3_q3_stage_cost_composition")
+    save(fig, "fig_6_5_q3_stage_cost_composition")
 
 
-# ============================ 图6-5 三阶段 Shapley 收益分摊（独立成图）
-def fig_6_3_shapley(q3: dict) -> None:
+# ============================ 图6-6 三阶段 Shapley 收益分摊（独立成图）
+def fig_6_6_shapley(q3: dict) -> None:
     st = _q3_stage_stats(q3)
     order = ["6:00", "12:00", "18:00"]
     vals = np.array([st["shap"][k] for k in order]) / 1e4
@@ -648,11 +697,11 @@ def fig_6_3_shapley(q3: dict) -> None:
          "不是预报信息的纯因果价值；三阶段单独取值不可直接相加。",
          ha="left", va="bottom", size=7.4)
 
-    save(fig, "fig_6_3_q3_shapley_allocation")
+    save(fig, "fig_6_6_q3_shapley_allocation")
 
 
-# ====================================================== 图6-4 问题四两策略比较
-def fig_6_4(q4: dict) -> None:
+# ====================================================== 图6-7 问题四两策略比较
+def fig_6_7(q4: dict) -> None:
     t2, t3 = q4["s2"]["totals"], q4["s3"]["totals"]
     check("4-2总费用", t2["total_cost_yuan"], 15201795.404210, 0.01, " 元")
     check("4-3总费用", t3["total_cost_yuan"], 13876490.551360, 0.01, " 元")
@@ -734,11 +783,11 @@ def fig_6_4(q4: dict) -> None:
          f"总费用 −{diff / 1e4:.4f} 万元（{100 * diff / t2['total_cost_yuan']:.4f}%）",
          ha="left", va="top", size=7.6)
 
-    save(fig, "fig_6_4_q4_aggregate_comparison")
+    save(fig, "fig_6_7_q4_aggregate_comparison")
 
 
-# ================================================== 图6-5 逐日与累计节省
-def fig_6_5(q4: dict) -> None:
+# ================================================== 图6-8 逐日与累计节省
+def fig_6_8(q4: dict) -> None:
     d2, d3 = q4["s2"]["daily"], q4["s3"]["daily"]
     dates = [r["date"] for r in d2]
     assert dates == [r["date"] for r in d3]
@@ -827,7 +876,7 @@ def fig_6_5(q4: dict) -> None:
                           edgecolor="none", alpha=0.9),
                 arrowprops=dict(arrowstyle="-|>", color=ORANGE, linewidth=0.9))
 
-    save(fig, "fig_6_5_q4_daily_and_cumulative_savings")
+    save(fig, "fig_6_8_q4_daily_and_cumulative_savings")
 
 
 # ============================================================= 附件5 对账抽查
@@ -962,34 +1011,55 @@ CAPTIONS = {
         "收益未计储能投资、老化与维护成本。",
         [DATA / "附件1.xlsx", SRC / "q1_solver.py"],
     ),
-    "fig_6_2_q2_uncertainty_and_shortage_risk": (
-        "图6-3　问题二指定日期的净负荷情景覆盖与全年紧急购电风险分布",
+    "fig_6_3_q2_daily_emergency_purchase": (
+        "图6-3　评价期逐日紧急购电量",
         [
-            "面板 a—d 给出四个指定日期的中心预测净负荷（蓝色虚线）、实际净负荷（深灰实线）、"
-            "经验最小—最大包络（浅灰）与经验 10%—90% 分位带（灰蓝）。四日共 576 个自然日时段中，"
-            "实际值落入经验包络 394 段（68.40%），落入 10%—90% 分位带 314 段（54.51%）；"
-            "分日覆盖为 125/144、55/144、90/144、124/144 与 101/144、37/144、63/144、113/144。",
-            "面板 e 给出 334 天逐日紧急购电量，橙色柱为最需注意的两日。评价期内 170 天出现紧急购电，"
-            "最大日 2025-06-01 为 15465.52 kWh；题目指定日 2025-09-23 为 4471.62 kWh，"
+            "评价期 334 天中有 170 天出现紧急购电，全年紧急购电 26.7693 万kWh，"
+            "折合日均 801.5 kWh；最高日 2025-06-01 达 15465.52 kWh，约为日均的 19.3 倍，"
+            "灰色虚线给出全年日均水平。",
+            "题目指定日 2025-09-23 为 4471.62 kWh，在全年由高到低排第 18 位；"
             "而 2025-03-20、2025-06-21 与 2025-12-21 分别仅为 9.80、0.00 与 12.90 kWh，"
-            "说明总体占比不高仍可能伴随个别日期的集中缺口。",
+            "说明紧急购电总体占比不高，仍可能伴随个别日期的集中缺口。",
             "中心预测平均绝对误差与日紧急购电量的 Pearson 相关为 0.316、Spearman 相关为 0.074，"
             "只能说明二者存在有限的统计关联。",
         ],
-        "评价期 2025-02-01 至 2025-12-31，共 334 天；面板 a—d 为四个指定日期的 144 段。"
-        "净负荷与紧急购电量为 kWh（每 10 分钟）与 kWh（每日）。",
-        "q2_paper_audit 的 interval_detail.csv、daily_metrics.csv、coverage.json；"
+        "评价期 2025-02-01 至 2025-12-31，共 334 天；纵轴为每日紧急购电量（kWh）。",
+        "q2_paper_audit 的 daily_metrics.csv、interval_detail.csv；"
+        "逐日紧急购电量由 src/src/q2_solver.py 当前实现重算，"
+        "与 daily_metrics.csv 的当日合计逐日一致，"
+        "全年合计 267693.199361 kWh、最大日与 2025-09-23 数值均通过核对。",
+        "紧急购电量为按当日 144 段自然日口径聚合的补购电量，不含计划购电与合同调整；"
+        "逐日柱高受当日净负荷水平、预测误差方向与储电量状态共同影响，"
+        "MAE 与紧急购电量的相关系数仅为描述性统计，不构成因果识别。",
+        [Q2_AUDIT / "daily_metrics.csv", Q2_AUDIT / "interval_detail.csv",
+         SRC / "q2_solver.py", DATA / "附件2.xlsx"],
+    ),
+    "fig_6_4_q2_forecast_scenario_range": (
+        "图6-4　指定日期净负荷预测与经验情景范围",
+        [
+            "四个指定日期（按面板顺序为 2025-03-20、2025-06-21、2025-09-23、2025-12-21）"
+            "的中心预测净负荷（蓝色虚线）、实际净负荷（深灰实线）、"
+            "经验最小—最大包络（浅灰）与经验 10%—90% 分位带（灰蓝）。"
+            "四日共 576 个自然日时段中，实际值落入经验包络 394 段（68.40%），"
+            "落入 10%—90% 分位带 314 段（54.51%）；"
+            "分日包络覆盖依次为 125/144、55/144、90/144、124/144，"
+            "分日 10%—90% 分位带覆盖依次为 101/144、37/144、63/144、113/144。",
+            "橙色圆点与浅橙底色标出该时段实际发生了紧急购电：分位带越窄或实际净负荷越靠近包络上缘，"
+            "可用的调节余量越少，越容易触发紧急购电。",
+        ],
+        "四个指定日期各 144 段自然日时段，时间标签为区间起点；"
+        "纵轴为净负荷电量（kWh，每 10 分钟）。",
+        "q2_paper_audit 的 interval_detail.csv、coverage.json；"
         "情景带由 src/src/q2_solver.py 的当前情景构造函数重建（未使用正态区间替代），"
         "重建后覆盖计数与 coverage.json 完全一致（576 / 394 / 314），"
         "且四日的预测与实际序列与 interval_detail.csv 逐段一致。",
-        "包络与分位带为历史残差情景的经验范围，不是统计置信区间，也不代表全年覆盖率或全天无紧急购电概率；"
-        "MAE 与紧急购电量的相关系数仅为描述性统计，不构成因果识别——紧急购电还受计划量、储电量状态"
-        "与逐时段误差方向影响。",
-        [Q2_AUDIT / "interval_detail.csv", Q2_AUDIT / "daily_metrics.csv",
-         Q2_AUDIT / "coverage.json", SRC / "q2_solver.py", DATA / "附件2.xlsx"],
+        "包络与分位带为历史残差情景的经验范围，不是统计置信区间，"
+        "也不代表全年覆盖率或全天无紧急购电概率。",
+        [Q2_AUDIT / "interval_detail.csv", Q2_AUDIT / "coverage.json",
+         SRC / "q2_solver.py", DATA / "附件2.xlsx"],
     ),
-    "fig_6_3_q3_stage_cost_composition": (
-        "图6-4　问题三八种阶段组合的费用构成",
+    "fig_6_5_q3_stage_cost_composition": (
+        "图6-5　问题三八种阶段组合的费用构成",
         [
             "面板 a 按总费用升序给出八种预报发布与调整时刻组合的费用构成（自 0 起，量级可比）："
             "计划费用（科研蓝）+ 调整费用（灰蓝）+ 紧急费用（深蓝），灰色虚线为仅 0:00 基线 1398.69 万元。"
@@ -1014,8 +1084,8 @@ CAPTIONS = {
         [Q3_AUDIT / "q3_stage_comparison.csv", Q3_AUDIT / "q3_stage_comparison.json",
          ANNEX5 / "result3.xlsx"],
     ),
-    "fig_6_3_q3_shapley_allocation": (
-        "图6-5　问题三三阶段 Shapley 收益分摊",
+    "fig_6_6_q3_shapley_allocation": (
+        "图6-6　问题三三阶段 Shapley 收益分摊",
         [
             "相对仅 0:00 的节省在三个日内更新时刻上的 Shapley 分摊：6:00 为 23.28 万元（29.33%）、"
             "12:00 为 21.97 万元（27.69%）、18:00 为 34.11 万元（42.98%），18:00 贡献最大；"
@@ -1035,8 +1105,8 @@ CAPTIONS = {
         [Q3_AUDIT / "q3_stage_comparison.csv", Q3_AUDIT / "q3_stage_comparison.json",
          ANNEX5 / "result3.xlsx"],
     ),
-    "fig_6_4_q4_aggregate_comparison": (
-        "图6-6　问题四两种策略的费用构成与紧急购电量比较",
+    "fig_6_7_q4_aggregate_comparison": (
+        "图6-7　问题四两种策略的费用构成与紧急购电量比较",
         [
             "4-2 在 334 天评价期的总费用为 1520.18 万元，其中计划费用 1349.17 万元、紧急费用 171.01 万元，"
             "无调整费用；4-3 的总费用为 1387.65 万元，其中计划费用 1273.42 万元、调整费用 91.61 万元、"
@@ -1055,8 +1125,8 @@ CAPTIONS = {
         [Q4 / "summary_q4-2_K30.json", Q4 / "summary_q4-3_K30.json",
          ANNEX5 / "result4-2.xlsx", ANNEX5 / "result4-3.xlsx"],
     ),
-    "fig_6_5_q4_daily_and_cumulative_savings": (
-        "图6-7　问题四逐日费用节省与 334 天累计节省",
+    "fig_6_8_q4_daily_and_cumulative_savings": (
+        "图6-8　问题四逐日费用节省与 334 天累计节省",
         [
             "逐日节省定义为 $\\Delta C_d = C_{4\\text{-}2,d} - C_{4\\text{-}3,d}$。334 天中 4-3 费用较低的为 237 天（科研蓝），"
             "费用较高的为 97 天（橙色），全年费用较低并不意味着每日均占优。",
@@ -1174,11 +1244,12 @@ def main() -> None:
 
     print("绘制图件……")
     fig_5_1()
-    fig_6_2(q2)
-    fig_6_3(q3)
-    fig_6_3_shapley(q3)
-    fig_6_4(q4)
-    fig_6_5(q4)
+    fig_6_3_q2_daily_emergency(q2)
+    fig_6_4_q2_scenario_range(q2)
+    fig_6_5(q3)
+    fig_6_6_shapley(q3)
+    fig_6_7(q4)
+    fig_6_8(q4)
 
     # 外挂图件由同级脚本各自生成（各脚本自带数据源与对账），此处只核对产物存在。
     # 它们不进上面这段绘制流程，只登记到图注与清单里。
@@ -1195,11 +1266,12 @@ def main() -> None:
         "fig_5_3_annual_data_heatmap",
         "fig_6_1_q1_price_and_storage_dispatch",
         "fig_6_2_q1_period_cost_difference",
-        "fig_6_2_q2_uncertainty_and_shortage_risk",
-        "fig_6_3_q3_stage_cost_composition",
-        "fig_6_3_q3_shapley_allocation",
-        "fig_6_4_q4_aggregate_comparison",
-        "fig_6_5_q4_daily_and_cumulative_savings",
+        "fig_6_3_q2_daily_emergency_purchase",
+        "fig_6_4_q2_forecast_scenario_range",
+        "fig_6_5_q3_stage_cost_composition",
+        "fig_6_6_q3_shapley_allocation",
+        "fig_6_7_q4_aggregate_comparison",
+        "fig_6_8_q4_daily_and_cumulative_savings",
     ]
     from PIL import Image
 
